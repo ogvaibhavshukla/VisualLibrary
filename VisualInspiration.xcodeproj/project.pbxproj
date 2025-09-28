@@ -7,67 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2800F7412DA1CEA0008FE5F9 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2800F7402DA1CE9A008FE5F9 /* .gitignore */; };
+		2857D4702D5F8A8000EE1012 /* VisualInspirationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2857D46F2D5F8A8000EE1012 /* VisualInspirationApp.swift */; };
+		2857D4722D5F8A8000EE1012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2857D4712D5F8A8000EE1012 /* ContentView.swift */; };
+		2857D4742D5F8A8000EE1012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4732D5F8A8000EE1012 /* Assets.xcassets */; };
+		2857D4772D5F8A8000EE1012 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */; };
+		2857D47A2D5F8A8000EE1012 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		2857D4822D5F8A8100EE1012 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2857D4682D5F8A8000EE1012 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2857D46F2D5F8A8000EE1012;
-			remoteInfo = VisualInspiration;
-		};
-		2857D48C2D5F8A8100EE1012 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2857D4682D5F8A8000EE1012 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2857D46F2D5F8A8000EE1012;
-			remoteInfo = VisualInspiration;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		2800F7402DA1CE9A008FE5F9 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		2857D4702D5F8A8000EE1012 /* VisualInspiration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualInspiration.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2857D4812D5F8A8100EE1012 /* VisualInspirationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisualInspirationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2857D48B2D5F8A8100EE1012 /* VisualInspirationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisualInspirationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2857D46C2D5F8A8000EE1012 /* VisualInspiration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualInspiration.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2857D46F2D5F8A8000EE1012 /* VisualInspirationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualInspirationApp.swift; sourceTree = "<group>"; };
+		2857D4712D5F8A8000EE1012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2857D4732D5F8A8000EE1012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
+		2857D47B2D5F8A8000EE1012 /* VisualInspiration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VisualInspiration.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		2857D4722D5F8A8000EE1012 /* VisualInspiration */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = VisualInspiration;
-			sourceTree = "<group>";
-		};
-		2857D4842D5F8A8100EE1012 /* VisualInspirationTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = VisualInspirationTests;
-			sourceTree = "<group>";
-		};
-		2857D48E2D5F8A8100EE1012 /* VisualInspirationUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = VisualInspirationUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
-		2857D46D2D5F8A8000EE1012 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2857D47E2D5F8A8100EE1012 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2857D4882D5F8A8100EE1012 /* Frameworks */ = {
+		2857D4692D5F8A8000EE1012 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -77,206 +35,132 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2857D4672D5F8A8000EE1012 = {
+		2857D4632D5F8A8000EE1012 = {
 			isa = PBXGroup;
 			children = (
-				2800F7402DA1CE9A008FE5F9 /* .gitignore */,
-				2857D4722D5F8A8000EE1012 /* VisualInspiration */,
-				2857D4842D5F8A8100EE1012 /* VisualInspirationTests */,
-				2857D48E2D5F8A8100EE1012 /* VisualInspirationUITests */,
-				2857D4712D5F8A8000EE1012 /* Products */,
+				2857D46E2D5F8A8000EE1012 /* VisualInspiration */,
+				2857D46D2D5F8A8000EE1012 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		2857D4712D5F8A8000EE1012 /* Products */ = {
+		2857D46D2D5F8A8000EE1012 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2857D4702D5F8A8000EE1012 /* VisualInspiration.app */,
-				2857D4812D5F8A8100EE1012 /* VisualInspirationTests.xctest */,
-				2857D48B2D5F8A8100EE1012 /* VisualInspirationUITests.xctest */,
+				2857D46C2D5F8A8000EE1012 /* VisualInspiration.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2857D46E2D5F8A8000EE1012 /* VisualInspiration */ = {
+			isa = PBXGroup;
+			children = (
+				2857D46F2D5F8A8000EE1012 /* VisualInspirationApp.swift */,
+				2857D4712D5F8A8000EE1012 /* ContentView.swift */,
+				2857D4732D5F8A8000EE1012 /* Assets.xcassets */,
+				2857D47B2D5F8A8000EE1012 /* VisualInspiration.entitlements */,
+				2857D4752D5F8A8000EE1012 /* Preview Content */,
+				2857D4782D5F8A8000EE1012 /* fonts */,
+			);
+			path = VisualInspiration;
+			sourceTree = "<group>";
+		};
+		2857D4752D5F8A8000EE1012 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		2857D4782D5F8A8000EE1012 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */,
+			);
+			path = fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2857D46F2D5F8A8000EE1012 /* VisualInspiration */ = {
+		2857D46B2D5F8A8000EE1012 /* VisualInspiration */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2857D4952D5F8A8100EE1012 /* Build configuration list for PBXNativeTarget "VisualInspiration" */;
+			buildConfigurationList = 2857D47E2D5F8A8000EE1012 /* Build configuration list for PBXNativeTarget "VisualInspiration" */;
 			buildPhases = (
-				2857D46C2D5F8A8000EE1012 /* Sources */,
-				2857D46D2D5F8A8000EE1012 /* Frameworks */,
-				2857D46E2D5F8A8000EE1012 /* Resources */,
+				2857D4682D5F8A8000EE1012 /* Sources */,
+				2857D4692D5F8A8000EE1012 /* Frameworks */,
+				2857D46A2D5F8A8000EE1012 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				2857D4722D5F8A8000EE1012 /* VisualInspiration */,
 			);
 			name = VisualInspiration;
-			packageProductDependencies = (
-			);
 			productName = VisualInspiration;
-			productReference = 2857D4702D5F8A8000EE1012 /* VisualInspiration.app */;
+			productReference = 2857D46C2D5F8A8000EE1012 /* VisualInspiration.app */;
 			productType = "com.apple.product-type.application";
-		};
-		2857D4802D5F8A8100EE1012 /* VisualInspirationTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2857D4982D5F8A8100EE1012 /* Build configuration list for PBXNativeTarget "VisualInspirationTests" */;
-			buildPhases = (
-				2857D47D2D5F8A8100EE1012 /* Sources */,
-				2857D47E2D5F8A8100EE1012 /* Frameworks */,
-				2857D47F2D5F8A8100EE1012 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2857D4832D5F8A8100EE1012 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2857D4842D5F8A8100EE1012 /* VisualInspirationTests */,
-			);
-			name = VisualInspirationTests;
-			packageProductDependencies = (
-			);
-			productName = VisualInspirationTests;
-			productReference = 2857D4812D5F8A8100EE1012 /* VisualInspirationTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		2857D48A2D5F8A8100EE1012 /* VisualInspirationUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2857D49B2D5F8A8100EE1012 /* Build configuration list for PBXNativeTarget "VisualInspirationUITests" */;
-			buildPhases = (
-				2857D4872D5F8A8100EE1012 /* Sources */,
-				2857D4882D5F8A8100EE1012 /* Frameworks */,
-				2857D4892D5F8A8100EE1012 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2857D48D2D5F8A8100EE1012 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2857D48E2D5F8A8100EE1012 /* VisualInspirationUITests */,
-			);
-			name = VisualInspirationUITests;
-			packageProductDependencies = (
-			);
-			productName = VisualInspirationUITests;
-			productReference = 2857D48B2D5F8A8100EE1012 /* VisualInspirationUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		2857D4682D5F8A8000EE1012 /* Project object */ = {
+		2857D4642D5F8A8000EE1012 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
-					2857D46F2D5F8A8000EE1012 = {
+					2857D46B2D5F8A8000EE1012 = {
 						CreatedOnToolsVersion = 16.1;
-					};
-					2857D4802D5F8A8100EE1012 = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = 2857D46F2D5F8A8000EE1012;
-					};
-					2857D48A2D5F8A8100EE1012 = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = 2857D46F2D5F8A8000EE1012;
 					};
 				};
 			};
-			buildConfigurationList = 2857D46B2D5F8A8000EE1012 /* Build configuration list for PBXProject "VisualInspiration" */;
+			buildConfigurationList = 2857D4672D5F8A8000EE1012 /* Build configuration list for PBXProject "VisualInspiration" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 2857D4672D5F8A8000EE1012;
+			mainGroup = 2857D4632D5F8A8000EE1012;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 2857D4712D5F8A8000EE1012 /* Products */;
+			productRefGroup = 2857D46D2D5F8A8000EE1012 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2857D46F2D5F8A8000EE1012 /* VisualInspiration */,
-				2857D4802D5F8A8100EE1012 /* VisualInspirationTests */,
-				2857D48A2D5F8A8100EE1012 /* VisualInspirationUITests */,
+				2857D46B2D5F8A8000EE1012 /* VisualInspiration */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2857D46E2D5F8A8000EE1012 /* Resources */ = {
+		2857D46A2D5F8A8000EE1012 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2800F7412DA1CEA0008FE5F9 /* .gitignore in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2857D47F2D5F8A8100EE1012 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2857D4892D5F8A8100EE1012 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				2857D4772D5F8A8000EE1012 /* Preview Assets.xcassets in Resources */,
+				2857D47A2D5F8A8000EE1012 /* Lato-Regular.ttf in Resources */,
+				2857D4742D5F8A8000EE1012 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2857D46C2D5F8A8000EE1012 /* Sources */ = {
+		2857D4682D5F8A8000EE1012 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2857D47D2D5F8A8100EE1012 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2857D4872D5F8A8100EE1012 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				2857D4722D5F8A8000EE1012 /* ContentView.swift in Sources */,
+				2857D4702D5F8A8000EE1012 /* VisualInspirationApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		2857D4832D5F8A8100EE1012 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2857D46F2D5F8A8000EE1012 /* VisualInspiration */;
-			targetProxy = 2857D4822D5F8A8100EE1012 /* PBXContainerItemProxy */;
-		};
-		2857D48D2D5F8A8100EE1012 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2857D46F2D5F8A8000EE1012 /* VisualInspiration */;
-			targetProxy = 2857D48C2D5F8A8100EE1012 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		2857D4932D5F8A8100EE1012 /* Debug */ = {
+		2857D47C2D5F8A8000EE1012 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -337,7 +221,7 @@
 			};
 			name = Debug;
 		};
-		2857D4942D5F8A8100EE1012 /* Release */ = {
+		2857D47D2D5F8A8000EE1012 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -369,7 +253,6 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -391,221 +274,80 @@
 			};
 			name = Release;
 		};
-		2857D4962D5F8A8100EE1012 /* Debug */ = {
+		2857D47F2D5F8A8000EE1012 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = VisualInspiration/VisualInspiration.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"VisualInspiration/Preview Content\"";
-				DEVELOPMENT_TEAM = 2UDAY4J48G;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.visuallibrary.visualinspiration;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = macosx;
-				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Debug;
 		};
-		2857D4972D5F8A8100EE1012 /* Release */ = {
+		2857D4802D5F8A8000EE1012 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = VisualInspiration/VisualInspiration.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"VisualInspiration/Preview Content\"";
-				DEVELOPMENT_TEAM = 2UDAY4J48G;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesos*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.visuallibrary.visualinspiration;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = macosx;
-				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Release;
-		};
-		2857D4992D5F8A8100EE1012 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6D7X9GGZAW;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = visuallibrary.VisualInspirationTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VisualInspiration.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VisualInspiration";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Debug;
-		};
-		2857D49A2D5F8A8100EE1012 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6D7X9GGZAW;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = visuallibrary.VisualInspirationTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VisualInspiration.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VisualInspiration";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Release;
-		};
-		2857D49C2D5F8A8100EE1012 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6D7X9GGZAW;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = visuallibrary.VisualInspirationUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = VisualInspiration;
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Debug;
-		};
-		2857D49D2D5F8A8100EE1012 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6D7X9GGZAW;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = visuallibrary.VisualInspirationUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = VisualInspiration;
-				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2857D46B2D5F8A8000EE1012 /* Build configuration list for PBXProject "VisualInspiration" */ = {
+		2857D4672D5F8A8000EE1012 /* Build configuration list for PBXProject "VisualInspiration" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2857D4932D5F8A8100EE1012 /* Debug */,
-				2857D4942D5F8A8100EE1012 /* Release */,
+				2857D47C2D5F8A8000EE1012 /* Debug */,
+				2857D47D2D5F8A8000EE1012 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2857D4952D5F8A8100EE1012 /* Build configuration list for PBXNativeTarget "VisualInspiration" */ = {
+		2857D47E2D5F8A8000EE1012 /* Build configuration list for PBXNativeTarget "VisualInspiration" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2857D4962D5F8A8100EE1012 /* Debug */,
-				2857D4972D5F8A8100EE1012 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2857D4982D5F8A8100EE1012 /* Build configuration list for PBXNativeTarget "VisualInspirationTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2857D4992D5F8A8100EE1012 /* Debug */,
-				2857D49A2D5F8A8100EE1012 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2857D49B2D5F8A8100EE1012 /* Build configuration list for PBXNativeTarget "VisualInspirationUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2857D49C2D5F8A8100EE1012 /* Debug */,
-				2857D49D2D5F8A8100EE1012 /* Release */,
+				2857D47F2D5F8A8000EE1012 /* Debug */,
+				2857D4802D5F8A8000EE1012 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 2857D4682D5F8A8000EE1012 /* Project object */;
+	rootObject = 2857D4642D5F8A8000EE1012 /* Project object */;
 }
-
