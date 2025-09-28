@@ -41,12 +41,12 @@ struct ContentView: View {
     // File manager and directory setup (following Freewrite's pattern)
     private let fileManager = FileManager.default
     
-    // Cached images directory (following Freewrite's pattern)
+    // Cached images directory (following Freewrite's Documents pattern)
     private let imagesDirectory: URL = {
-        // Use sandboxed Pictures directory for macOS app
-        let directory = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0].appendingPathComponent("VisualInspiration")
+        // Use Documents directory like Freewrite does
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("VisualInspiration")
         
-        print("🔍 DEBUG: FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0] = \(FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask)[0])")
+        print("🔍 DEBUG: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] = \(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0])")
         print("🔍 DEBUG: Final imagesDirectory = \(directory)")
         
         // Create VisualInspiration directory if it doesn't exist
@@ -84,7 +84,7 @@ struct ContentView: View {
                 
                 // Image grid area (replacing text editor)
                 ScrollView {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
+                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 4), spacing: 4) {
                         ForEach(images) { image in
                             ImageThumbnailView(image: image, colorScheme: colorScheme)
                                 .onHover { hovering in
@@ -368,9 +368,9 @@ struct ImageThumbnailView: View {
             if let thumbnail = image.thumbnail {
                 Image(nsImage: thumbnail)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: 120, height: 120)
-                    .clipped()
+                    .background(Color.gray.opacity(0.1))
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
