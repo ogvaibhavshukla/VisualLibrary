@@ -37,6 +37,7 @@ struct ContentView: View {
     @State private var hoveredImageId: UUID? = nil
     @State private var draggedImage: ImageAsset? = nil
     @State private var currentTime = Date()
+    @State private var isReloading = false
     
     // File manager and directory setup (following Freewrite's pattern)
     private let fileManager = FileManager.default
@@ -104,6 +105,8 @@ struct ContentView: View {
                 .padding(.bottom, navHeight)
                 .background(Color(colorScheme == .light ? .white : .black))
                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
+                .opacity(isReloading ? 0.7 : 1.0)
+                .animation(.easeInOut(duration: 0.1), value: isReloading)
                 .onDrop(of: [.image], isTargeted: nil) { providers in
                     handleImageDrop(providers: providers)
                 }
@@ -139,12 +142,25 @@ struct ContentView: View {
                                 .foregroundColor(textColor)
                                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
                             
-                            Button("Reload") {
-                                loadExistingImages()
-                            }
-                            .buttonStyle(.plain)
-                            .foregroundColor(textColor)
-                            .font(.system(size: 11))
+            Button(action: {
+                // Simple screen flash effect
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    isReloading = true
+                }
+                loadExistingImages()
+                
+                // Stop flash after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        isReloading = false
+                    }
+                }
+            }) {
+                Image(systemName: "arrow.clockwise")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(textColor)
+            }
+            .buttonStyle(.plain)
                         }
                         .padding(8)
                         .cornerRadius(6)
