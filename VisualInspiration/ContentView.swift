@@ -83,23 +83,17 @@ struct ContentView: View {
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.6), value: colorScheme)
                 
-                // Image grid area (replacing text editor)
-                ScrollView {
-                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 4), spacing: 4) {
-                        ForEach(images) { image in
-                            ImageThumbnailView(image: image, colorScheme: colorScheme)
-                                .onHover { hovering in
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        hoveredImageId = hovering ? image.id : nil
-                                    }
-                                }
-                                .onTapGesture {
-                                    // Open image in QuickLook
-                                    NSWorkspace.shared.open(image.filePath)
-                                }
-                        }
+                // Image grid area (replacing text editor) - Masonry Layout
+                GeometryReader { geo in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        MasonryGridView(
+                            images: images,
+                            colorScheme: colorScheme,
+                            hoveredImageId: $hoveredImageId,
+                            availableWidth: geo.size.width - 60 // account for 30px padding on each side
+                        )
+                        .padding(30)
                     }
-                    .padding()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.bottom, navHeight)
@@ -226,13 +220,16 @@ struct ContentView: View {
                                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
                         }
                         .padding(8)
+                        .background(Color.clear)
+                        .compositingGroup()
+                        .shadow(color: (colorScheme == .light ? Color.white.opacity(0.35) : Color.black.opacity(0.35)), radius: 2, x: 0, y: 1)
                         .cornerRadius(6)
                         .onHover { hovering in
                             isHoveringBottomNav = hovering
                         }
                     }
                     .padding()
-                    .background(Color(colorScheme == .light ? .white : .black))
+                    .background(Color.clear)
                     .animation(.easeInOut(duration: 0.6), value: colorScheme)
                     .opacity(bottomNavOpacity)
                     .onHover { hovering in
@@ -402,6 +399,116 @@ struct ImageThumbnailView: View {
                     .overlay(
                         Image(systemName: "photo")
                             .foregroundColor(.gray)
+                    )
+            }
+        }
+        .onHover { hovering in
+            isHovered = hovering
+        }
+    }
+}
+
+// MARK: - Masonry Grid View Component
+struct MasonryGridView: View {
+    let images: [ImageAsset]
+    let colorScheme: ColorScheme
+    @Binding var hoveredImageId: UUID?
+    let availableWidth: CGFloat
+    
+    var body: some View {
+        let columnCount = getColumnCount(for: availableWidth)
+        let columnWidth = (availableWidth - CGFloat(columnCount - 1) * 14) / CGFloat(columnCount)
+        
+        HStack(alignment: .top, spacing: 14) {
+            ForEach(0..<columnCount, id: \.self) { columnIndex in
+                LazyVStack(spacing: 14) {
+                    ForEach(getImagesForColumn(columnIndex, totalColumns: columnCount)) { image in
+                        MasonryImageThumbnailView(
+                            image: image, 
+                            colorScheme: colorScheme,
+                            width: columnWidth
+                        )
+                        .onHover { hovering in
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                hoveredImageId = hovering ? image.id : nil
+                            }
+                        }
+                        .onTapGesture {
+                            // Open image in QuickLook
+                            NSWorkspace.shared.open(image.filePath)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func getColumnCount(for width: CGFloat) -> Int {
+        if width >= 1400 {
+            return 7
+        } else if width >= 1100 {
+            return 6
+        } else if width >= 700 {
+            return 5
+        } else {
+            return 4
+        }
+    }
+    
+    private func getImagesForColumn(_ columnIndex: Int, totalColumns: Int) -> [ImageAsset] {
+        return images.enumerated().compactMap { index, image in
+            index % totalColumns == columnIndex ? image : nil
+        }
+    }
+}
+
+// MARK: - Masonry Image Thumbnail View Component
+struct MasonryImageThumbnailView: View {
+    let image: ImageAsset
+    let colorScheme: ColorScheme
+    let width: CGFloat
+    @State private var isHovered = false
+    
+    var body: some View {
+        Group {
+            if let thumbnail = image.thumbnail {
+                Image(nsImage: thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: width)
+                    .background(Color.gray.opacity(0.10))
+                    .cornerRadius(8)
+                    .animation(.easeInOut(duration: 0.12), value: isHovered)
+                    .overlay(
+                        Group {
+                            if isHovered {
+                                // Darker overlay in light mode, lighter overlay in dark mode
+                                let edgeColor = (colorScheme == .light)
+                                    ? Color.black.opacity(0.22)
+                                    : Color.white.opacity(0.18)
+                                LinearGradient(
+                                    gradient: Gradient(stops: [
+                                        .init(color: edgeColor, location: 0.0),
+                                        .init(color: .clear, location: 0.5),
+                                        .init(color: edgeColor, location: 1.0)
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .cornerRadius(8)
+                                .transition(.opacity)
+                            }
+                        }
+                    )
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: width, height: width * 0.75)
+                    .cornerRadius(8)
+                    .overlay(
+                        Image(systemName: "photo")
+                            .foregroundColor(.gray)
+                            .font(.title2)
                     )
             }
         }
