@@ -74,7 +74,7 @@ struct ContentView: View {
     var body: some View {
         let textColor = colorScheme == .light ? Color.gray : Color.gray.opacity(0.8)
         let textHoverColor = colorScheme == .light ? Color.black : Color.white
-        let navHeight: CGFloat = 68
+        let navHeight: CGFloat = 52
         
         HStack(spacing: 0) {
             // Main content area - will be replaced with image grid
@@ -228,22 +228,12 @@ struct ContentView: View {
                             isHoveringBottomNav = hovering
                         }
                     }
-                    .padding()
+                    .padding(.horizontal, 30)
+                    // .padding(.top, 2)
+                    .padding(.bottom, 10) 
                     .background(Color.clear)
                     .animation(.easeInOut(duration: 0.6), value: colorScheme)
-                    .opacity(bottomNavOpacity)
-                    .onHover { hovering in
-                        isHoveringBottomNav = hovering
-                        if hovering {
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                bottomNavOpacity = 1.0
-                            }
-                        } else {
-                            withAnimation(.easeIn(duration: 1.0)) {
-                                bottomNavOpacity = 0.0
-                            }
-                        }
-                    }
+                    .opacity(1.2)
                 }
             }
         }
