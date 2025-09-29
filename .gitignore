@@ -1,6 +1,6 @@
 
 # Do not commit local reference repo
 freewrite-reference/
-cursor/
+
 # Ignore local Cursor workspace settings
 .cursor/
