@@ -1,102 +1,88 @@
-# Visual Inspiration - Phase 1 Complete
+# Visual Inspiration (v1.0.0)
 
-A minimalist macOS visual inspiration manager built following Freewrite's architectural patterns.
+A minimalist, local-first macOS visual inspiration manager. Built with SwiftUI, inspired by Freewrite’s simplicity and focus.
 
-## Phase 1 Implementation ✅
+## Status
 
-### Completed Tasks:
-
-1. **✅ Clean Swift Project Structure**
-   - Created Xcode project with proper macOS configuration
-   - Set up bundle identifier: `app.visuallibrary.visualinspiration`
-   - Configured for macOS 14.0+ deployment target
-
-2. **✅ Window Setup (Exactly like Freewrite)**
-   - Borderless window with hidden title bar
-   - Fixed window size (1100x600)
-   - Window centering on launch
-   - Fullscreen toggle functionality
-   - AppDelegate integration for lifecycle management
-
-3. **✅ Bottom Bar Component (Matching Freewrite Design)**
-   - Identical layout and spacing
-   - Theme toggle button (light/dark mode)
-   - Fullscreen/minimize button
-   - Hover effects and cursor management
-   - Opacity animations matching Freewrite's behavior
-
-4. **✅ Basic App Structure**
-   - SwiftUI App with `@main` entry point
-   - ContentView with placeholder for image grid
-   - Theme management with persistent preferences
-   - Lato font integration (copied from Freewrite)
-   - Proper file organization and project structure
+- Phase 1: Done
+- Phase 2: Done
+- Phase 3: Preview + UX polish done, performance in progress, packaging pending
 
 ## Project Structure
 
 ```
 VisualInspiration/
-├── VisualInspirationApp.swift      # Main app entry point
-├── ContentView.swift               # Main view with bottom bar
+├── VisualInspirationApp.swift      # App entry + window configuration
+├── ContentView.swift               # Main UI: grid, bottom bar, preview, copy
+├── Models/                         # (reserved)
+├── Views/                          # (reserved)
+├── Utilities/                      # (reserved)
+├── Resources/                      # (reserved)
+├── Assets.xcassets/                # App icons and colors
 ├── fonts/                          # Lato font family
-├── Assets.xcassets/               # App icons and colors
-├── VisualInspiration.entitlements # App sandbox permissions
-└── Preview Content/               # SwiftUI preview assets
+├── VisualInspiration.entitlements  # App sandbox permissions
+└── Preview Content/                # SwiftUI preview assets
 ```
 
-## Key Features Implemented
+## Features
 
-- **Window Management**: Identical to Freewrite's borderless, centered window
-- **Theme System**: Light/dark mode with persistent storage
-- **Bottom Bar**: Exact replica of Freewrite's control layout
-- **Font Integration**: Lato font family for consistent typography
-- **App Lifecycle**: Proper AppDelegate integration
+- Window & Theme
+  - Hidden title bar with full-size content (no reserved top space)
+  - Light/Dark mode with persistence
+- Image Grid
+  - Drag & drop from Finder/Browser
+  - Masonry layout with hover effects
+  - Asynchronous, downsampled thumbnails (no full-size loads in grid)
+  - In-memory thumbnail cache (NSCache)
+- Preview
+  - Single-click to open embedded preview
+  - Click outside or press ESC to close
+  - Left/Right chevrons at image edge and arrow-key navigation
+  - Double-click, Cmd+C/Ctrl+C, or context menu to Copy Image
+  - “Copied!” toast with haptic feedback
+- File Storage
+  - Images stored locally at `~/Documents/VisualInspiration/`
+  - Supported image types: jpg, jpeg, png, gif, bmp, tiff, heic, webp
+- Management
+  - Hover delete button removes file from disk and grid
+  - Image count in bottom bar; live clock; fullscreen toggle; theme toggle
 
-## Phase 2 Implementation ✅ COMPLETED
+## Phase Breakdown
 
-### Completed Tasks:
+### Phase 1 (Complete)
+- Clean Swift project, App/Window setup, bottom bar, theme system, fonts
 
-1. **✅ Image Grid Implementation**
-   - Replaced text editor with LazyVGrid layout
-   - 4-column responsive grid with 8px spacing
-   - Image thumbnails with hover effects and animations
-   - Click to open images in QuickLook
+### Phase 2 (Complete)
+- Image grid, drag & drop, local storage, basic management and UI polish
 
-2. **✅ Drag & Drop Functionality**
-   - Full drag & drop support for images from Finder/browser
-   - Handles both URL and Data providers
-   - Automatic file copying to local storage
-   - Real-time grid updates
+### Phase 3 (Partially Complete)
+- Preview UX: complete (embedded, navigation, copy, toast)
+- Haptics: complete
+- Performance: in progress
+  - Async downsampled thumbnails + memory cache (done)
+  - Optional disk cache with LRU + batching (planned)
+- Packaging: pending (align with Freewrite’s build config)
 
-3. **✅ Local File Storage**
-   - Images saved to `~/Pictures/VisualInspiration/` folder
-   - Automatic directory creation
-   - Support for multiple image formats (jpg, png, gif, heic, etc.)
-   - Persistent storage between app sessions
+## Shortcuts & Gestures
 
-4. **✅ Image Management System**
-   - ImageAsset model with UUID, filename, filePath, dateAdded
-   - Automatic thumbnail generation
-   - Image count display in bottom bar (like Freewrite's word count)
-   - Sorted by date added (newest first)
-
-5. **✅ UI Interactions & Animations**
-   - Hover effects with scale animations (1.05x)
-   - Smooth transitions matching Freewrite's style
-   - Empty state overlay (like Freewrite's placeholder)
-   - Theme-aware styling
-
-## Next Steps (Phase 3)
-
-- Add image preview functionality
-- Polish interactions and add haptic feedback
-- Test and refine performance
-- Package app following Freewrite's build configuration
+- Open preview: single-click on a thumbnail
+- Close preview: click outside, or ESC
+- Next/Prev: → / ← keys or chevron buttons
+- Copy image: double-click in preview, Cmd+C/Ctrl+C, or right-click > Copy Image
+- Toggle theme: bottom bar sun/moon
+- Toggle fullscreen: bottom bar button
 
 ## Running the Project
 
 1. Open `VisualInspiration.xcodeproj` in Xcode
-2. Select the VisualInspiration target
-3. Build and run (⌘+R)
+2. Select the `VisualInspiration` target
+3. Build and run (⌘R)
 
-The app will launch with Freewrite's exact window behavior and bottom bar, ready for Phase 2 image functionality implementation.
+First run creates `~/Documents/VisualInspiration/`. Drag images into the window to add them to your library.
+
+## Roadmap
+
+- Optional disk thumbnail cache (LRU, 256 MB cap, configurable)
+- Batching/prefetch for thumbnails
+- Video support (thumbs via AVFoundation, QuickLook preview)
+- Packaging & distribution settings
