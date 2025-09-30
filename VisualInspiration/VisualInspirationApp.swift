@@ -27,7 +27,7 @@ struct VisualInspirationApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1100, height: 600)
-        .windowToolbarStyle(.unifiedCompact)
+        .windowToolbarStyle(.unifiedCompact) 
         .windowResizability(.contentSize)
     }
 }
@@ -43,6 +43,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             // Center the window on the screen
             window.center()
+
+            // Remove any reserved title bar/toolbar space and extend content to full size
+            window.titleVisibility = .hidden
+            window.titlebarAppearsTransparent = true
+            window.styleMask.insert(.fullSizeContentView)
+            window.toolbar = nil
+            if #available(macOS 11.0, *) {
+                window.titlebarSeparatorStyle = .none
+            }
+            // Keep standard window capabilities off-screen; buttons are intentionally hidden
+            // because we use a minimal chrome-less appearance.
         }
     }
 }
