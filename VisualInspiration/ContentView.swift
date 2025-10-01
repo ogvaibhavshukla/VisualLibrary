@@ -46,12 +46,12 @@ struct ContentView: View {
     @State private var isPresentingEmbeddedPreview = false
     static let imageCopiedNotification = Notification.Name("VI.ImageCopied")
     
-    // File manager and directory setup (following Freewrite's pattern)
+    // File manager and directory setup
     private let fileManager = FileManager.default
     
-    // Cached images directory (following Freewrite's Documents pattern)
+    // Cached images directory
     private let imagesDirectory: URL = {
-        // Use Documents directory like Freewrite does
+        // Use Documents directory
         let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("VisualInspiration")
         
         print("🔍 DEBUG: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] = \(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0])")
@@ -134,7 +134,7 @@ struct ContentView: View {
                     }
                 )
                 .overlay(
-                    // Empty state overlay (like Freewrite's placeholder)
+                    // Empty state overlay
                     Group {
                         if images.isEmpty {
                             VStack {
@@ -154,11 +154,11 @@ struct ContentView: View {
                     }
                 )
                 
-                // Bottom control bar (exactly like Freewrite's)
+                // Bottom control bar
                 VStack {
                     Spacer()
                     HStack {
-                        // Left side controls (image count like Freewrite's word count)
+                        // Left side controls (image count)
                         HStack(spacing: 8) {
                             Text("\(images.count) images")
                                 .font(.system(size: 13))
@@ -193,7 +193,7 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        // Right side controls (matching Freewrite's layout)
+                        // Right side controls
                         HStack(spacing: 8) {
                             Button(isFullscreen ? "Minimize" : "Fullscreen") {
                                 if let window = NSApplication.shared.windows.first {
@@ -217,7 +217,7 @@ struct ContentView: View {
                             Text("•")
                                 .foregroundColor(.gray)
                             
-                            // Theme toggle button (exactly like Freewrite)
+                            // Theme toggle button
                             Button(action: {
                                 withAnimation(.easeInOut(duration: 0.8)) {
                                     colorScheme = colorScheme == .light ? .dark : .light
@@ -244,7 +244,7 @@ struct ContentView: View {
                             Text("•")
                                 .foregroundColor(.gray)
                             
-                            // Live timer (exactly like Freewrite)
+                            // Live timer
                             Text(currentTime, style: .time)
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(textColor)
@@ -279,7 +279,7 @@ struct ContentView: View {
         .onAppear {
             loadExistingImages()
             
-            // Start live timer (exactly like Freewrite)
+            // Start live timer
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 DispatchQueue.main.async {
                     currentTime = Date()
@@ -314,7 +314,7 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - Image Management Functions (following Freewrite's file handling patterns)
+    // MARK: - Image Management Functions
     
     private func loadExistingImages() {
         print("Looking for images in: \(imagesDirectory.path)")

@@ -13,7 +13,7 @@ struct VisualInspirationApp: App {
     @AppStorage("colorScheme") private var colorSchemeString: String = "light"
     
     init() {
-        // Register Lato font (keeping Freewrite's font system)
+        // Register Lato font
         if let fontURL = Bundle.main.url(forResource: "Lato-Regular", withExtension: "ttf") {
             CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
         }
@@ -32,7 +32,7 @@ struct VisualInspirationApp: App {
     }
 }
 
-// Add AppDelegate to handle window configuration (exactly like Freewrite)
+// AppDelegate handles window configuration
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         if let window = NSApplication.shared.windows.first {
