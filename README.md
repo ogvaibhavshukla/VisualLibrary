@@ -1,6 +1,6 @@
 # Visual Inspiration (v1.0.0)
 
-A minimalist, local-first macOS visual inspiration manager. Built with SwiftUI, inspired by Freewrite’s simplicity and focus.
+A minimalist, local-first macOS visual inspiration manager built with SwiftUI.
 
 ## Status
 
@@ -61,7 +61,7 @@ VisualInspiration/
 - Performance: in progress
   - Async downsampled thumbnails + memory cache (done)
   - Optional disk cache with LRU + batching (planned)
-- Packaging: pending (align with Freewrite’s build config)
+- Packaging: pending
 
 ## Shortcuts & Gestures
 
