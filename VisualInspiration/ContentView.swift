@@ -41,9 +41,9 @@ struct ContentView: View {
     @State private var hoveredImageId: UUID? = nil
     @State private var draggedImage: ImageAsset? = nil
     @State private var currentTime = Date()
-    @State private var isReloading = false
     @State private var quickLookSelectedIndex: Int? = nil
     @State private var isPresentingEmbeddedPreview = false
+    @State private var lastColumnCount: Int = 5
     static let imageCopiedNotification = Notification.Name("VI.ImageCopied")
     
     // File manager and directory setup
@@ -98,6 +98,9 @@ struct ContentView: View {
                             colorScheme: colorScheme,
                             hoveredImageId: $hoveredImageId,
                             availableWidth: geo.size.width - 60, // account for 30px padding on each side
+                            onColumnCountChange: { count in
+                                lastColumnCount = max(1, count)
+                            },
                             onPreviewRequested: { index in
                                 presentQuickLook(at: index)
                             },
@@ -112,8 +115,6 @@ struct ContentView: View {
                 .padding(.bottom, navHeight)
                 .background(Color(colorScheme == .light ? .white : .black))
                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
-                .opacity(isReloading ? 0.7 : 1.0)
-                .animation(.easeInOut(duration: 0.1), value: isReloading)
                 .onDrop(of: [.image], isTargeted: nil) { providers in
                     handleImageDrop(providers: providers)
                 }
@@ -122,9 +123,14 @@ struct ContentView: View {
                         if isPresentingEmbeddedPreview, let idx = quickLookSelectedIndex, images.indices.contains(idx) {
                             EmbeddedPreviewOverlay(
                                 urls: images.map { $0.filePath },
-                                selectedIndex: idx,
+                                selectedIndex: Binding(
+                                    get: { quickLookSelectedIndex ?? idx },
+                                    set: { quickLookSelectedIndex = $0 }
+                                ),
                                 onClose: {
-                                    isPresentingEmbeddedPreview = false
+                                    withAnimation(.easeInOut(duration: 0.22)) {
+                                        isPresentingEmbeddedPreview = false
+                                    }
                                 }
                             )
                             .transition(.opacity)
@@ -164,26 +170,6 @@ struct ContentView: View {
                                 .font(.system(size: 13))
                                 .foregroundColor(textColor)
                                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
-                            
-            Button(action: {
-                // Simple screen flash effect
-                withAnimation(.easeInOut(duration: 0.1)) {
-                    isReloading = true
-                }
-                loadExistingImages()
-                
-                // Stop flash after a short delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        isReloading = false
-                    }
-                }
-            }) {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(textColor)
-            }
-            .buttonStyle(.plain)
                         }
                         .padding(8)
                         .cornerRadius(6)
@@ -308,9 +294,31 @@ struct ContentView: View {
                         copyCurrentPreviewToPasteboard()
                         return nil
                     }
+                    // Arrow key navigation while preview is open
+                    if let idx = quickLookSelectedIndex {
+                        switch event.keyCode {
+                        case 123: // left
+                            if idx > 0 { quickLookSelectedIndex = idx - 1 }
+                            return nil
+                        case 124: // right
+                            if idx < images.count - 1 { quickLookSelectedIndex = idx + 1 }
+                            return nil
+                        case 126: // up
+                            let target = idx - lastColumnCount
+                            if target >= 0 { quickLookSelectedIndex = target }
+                            return nil
+                        case 125: // down
+                            let target = idx + lastColumnCount
+                            if target < images.count { quickLookSelectedIndex = target }
+                            return nil
+                        default:
+                            break
+                        }
+                    }
                 }
                 return event
             }
+            // No NotificationCenter needed; binding keeps indices in sync
         }
     }
     
@@ -512,6 +520,7 @@ struct MasonryGridView: View {
     let colorScheme: ColorScheme
     @Binding var hoveredImageId: UUID?
     let availableWidth: CGFloat
+    let onColumnCountChange: (Int) -> Void
     let onPreviewRequested: (Int) -> Void
     let onDeleteRequested: (ImageAsset) -> Void
     
@@ -544,6 +553,8 @@ struct MasonryGridView: View {
                 }
             }
         }
+        .onAppear { onColumnCountChange(columnCount) }
+        .onChange(of: availableWidth) { _ in onColumnCountChange(getColumnCount(for: availableWidth)) }
     }
     
     private func getColumnCount(for width: CGFloat) -> Int {
@@ -610,7 +621,7 @@ final class QuickLookPreviewer: NSObject {}
 // MARK: - Embedded Preview Overlay (SwiftUI)
 struct EmbeddedPreviewOverlay: View {
     let urls: [URL]
-    let selectedIndex: Int
+    @Binding var selectedIndex: Int
     let onClose: () -> Void
     @State private var index: Int = 0
 
@@ -642,35 +653,42 @@ struct EmbeddedPreviewOverlay: View {
                                     copyToPasteboard(urls[index])
                                 }
                             }
-                            // Left arrow straddling edge
+                            // Left arrow straddling edge (only when there is a previous image)
                             .overlay(alignment: .leading) {
-                                Button(action: { if index > 0 { index -= 1 } }) {
-                                    Image(systemName: "chevron.left.circle.fill")
-                                        .font(.system(size: arrowSize, weight: .semibold))
-                                        .foregroundColor(.white.opacity(0.96))
-                                        .shadow(color: .black.opacity(0.4), radius: 4)
+                                if urls.count > 1 && index > 0 {
+                                    Button(action: { index -= 1 }) {
+                                        Image(systemName: "chevron.left.circle.fill")
+                                            .font(.system(size: arrowSize, weight: .semibold))
+                                            .foregroundColor(.white.opacity(0.96))
+                                            .shadow(color: .black.opacity(0.4), radius: 4)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .keyboardShortcut(.leftArrow, modifiers: [])
+                                    .offset(x: -arrowSize / 2)
                                 }
-                                .buttonStyle(.plain)
-                                .keyboardShortcut(.leftArrow, modifiers: [])
-                                .offset(x: -arrowSize / 2)
                             }
-                            // Right arrow straddling edge
+                            // Right arrow straddling edge (only when there is a next image)
                             .overlay(alignment: .trailing) {
-                                Button(action: { if index < urls.count - 1 { index += 1 } }) {
-                                    Image(systemName: "chevron.right.circle.fill")
-                                        .font(.system(size: arrowSize, weight: .semibold))
-                                        .foregroundColor(.white.opacity(0.96))
-                                        .shadow(color: .black.opacity(0.4), radius: 4)
+                                if urls.count > 1 && index < urls.count - 1 {
+                                    Button(action: { index += 1 }) {
+                                        Image(systemName: "chevron.right.circle.fill")
+                                            .font(.system(size: arrowSize, weight: .semibold))
+                                            .foregroundColor(.white.opacity(0.96))
+                                            .shadow(color: .black.opacity(0.4), radius: 4)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .keyboardShortcut(.rightArrow, modifiers: [])
+                                    .offset(x: arrowSize / 2)
                                 }
-                                .buttonStyle(.plain)
-                                .keyboardShortcut(.rightArrow, modifiers: [])
-                                .offset(x: arrowSize / 2)
                             }
                     }
                 }
             }
         }
         .onAppear { index = min(max(0, selectedIndex), urls.count - 1) }
+        .onChange(of: index) { newValue in
+            selectedIndex = newValue
+        }
     }
 
     private func fittedImageSize(for url: URL, in boundingSize: CGSize) -> CGSize {
@@ -815,7 +833,10 @@ struct MasonryImageThumbnailView: View {
             // Load thumbnail asynchronously and cache
             if Self.thumbnailCache.object(forKey: image.filePath.path as NSString) == nil {
                 let url = image.filePath
-                await loadThumbnail(url: url, maxPixel: Int(width * NSScreen.main?.backingScaleFactor ?? 2.0))
+                await loadThumbnail(
+                    url: url,
+                    maxPixel: Int(width * 3.0) // Increased from 2.0 to 3.0 for better quality
+                )
             }
         }
     }

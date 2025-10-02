@@ -1,0 +1,65 @@
+{
+  "buildCommand" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildOnly"
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "6ef8c8681fcaf9605f33191eb148efd29c965c8b496e5676700e166aba9b92aa"
+    }
+  ],
+  "containerPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/VisualInspiration.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "macosx",
+      "sdk" : "macosx26.0",
+      "sdkVariant" : "macos",
+      "supportedArchitectures" : [
+        "arm64e",
+        "arm64",
+        "x86_64"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Products",
+      "derivedDataPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Release",
+    "overrides" : {
+      "commandLine" : {
+        "table" : {
+          "ARCHS" : "arm64 x86_64"
+        }
+      },
+      "synthesized" : {
+        "table" : {
+          "ACTION" : "build",
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "YES",
+          "ONLY_ACTIVE_ARCH" : "YES",
+          "TOOLCHAINS" : "com.apple.dt.toolchain.Metal.32023 $(inherited)"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

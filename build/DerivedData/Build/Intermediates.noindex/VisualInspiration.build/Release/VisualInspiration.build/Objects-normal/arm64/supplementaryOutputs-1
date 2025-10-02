@@ -1,0 +1,12 @@
+{
+  "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/VisualInspiration/ContentView.swift" : {
+    "abi-baseline-json" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration.abi.json",
+    "const-values" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration-primary.swiftconstvalues",
+    "dependencies" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration-primary.d",
+    "diagnostics" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration-primary.dia",
+    "objc-header" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration-Swift.h",
+    "swiftdoc" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration.swiftdoc",
+    "swiftmodule" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration.swiftmodule",
+    "swiftsourceinfo" : "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/build/DerivedData/Build/Intermediates.noindex/VisualInspiration.build/Release/VisualInspiration.build/Objects-normal/arm64/VisualInspiration.swiftsourceinfo"
+  }
+}

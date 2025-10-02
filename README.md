@@ -80,6 +80,45 @@ VisualInspiration/
 
 First run creates `~/Documents/VisualInspiration/`. Drag images into the window to add them to your library.
 
+## Packaging (local use / share with friends)
+
+We include a simple script to build a Release `.app` and a `.zip` suitable for personal use and sharing.
+
+1) Run the packaging script
+
+```bash
+chmod +x scripts/package.sh
+./scripts/package.sh
+```
+
+Outputs:
+- `dist/VisualInspiration.app`
+- `dist/VisualInspiration.zip`
+
+Notes:
+- This is a locally signed build (no Developer ID required). It runs on your Mac and can be shared; Gatekeeper may show a warning on other Macs unless you right‑click → Open.
+- App icon warnings printed by Xcode are safe to ignore for local builds; add missing icon sizes later.
+
+2) Optional: Use Developer ID and export
+
+If you have a paid Apple Developer account and want a Developer ID‑signed build (still outside the Mac App Store):
+
+```bash
+DEV_TEAM=YOURTEAMID \
+SIGNING_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
+./scripts/package.sh
+```
+
+The script will archive and export using `ExportOptions.plist` when both `DEV_TEAM` and `SIGNING_IDENTITY` are provided.
+
+3) Notarization (later, optional for public distribution)
+
+For distribution to a wider audience without warnings on macOS 10.15+:
+- Notarize with `xcrun notarytool submit <.zip or .app> --keychain-profile <profile> --wait`
+- Staple the ticket: `xcrun stapler staple <.app>`
+
+We can add a one‑command notarization step later if needed.
+
 ## Roadmap
 
 - Optional disk thumbnail cache (LRU, 256 MB cap, configurable)

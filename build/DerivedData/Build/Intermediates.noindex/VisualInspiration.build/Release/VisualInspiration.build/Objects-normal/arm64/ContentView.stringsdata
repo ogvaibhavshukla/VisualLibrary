@@ -1,0 +1,72 @@
+{
+  "source": "/Users/vaibhav/Desktop/Brief/Projects/visuallibrary/VisualInspiration/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Drag images here",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 152
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld images",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 169
+        }
+      },
+      {
+        "comment": "",
+        "key": "•",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 203
+        }
+      },
+      {
+        "comment": "",
+        "key": "•",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 230
+        }
+      },
+      {
+        "comment": "",
+        "key": "Minimize",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 184
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fullscreen",
+        "location": {
+          "startingColumn": 64,
+          "startingLine": 184
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copied!",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 452
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copy Image",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 652
+        }
+      }
+    ]
+  },
+  "version": 1
+}
