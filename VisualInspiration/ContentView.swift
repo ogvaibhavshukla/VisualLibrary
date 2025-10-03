@@ -12,18 +12,33 @@ import UniformTypeIdentifiers
 import QuickLookUI
 #endif
 
+struct Vault: Identifiable, Codable {
+    let id: UUID
+    var name: String
+    let createdAt: Date
+    var imageCount: Int
+    
+    init(name: String = "New Vault") {
+        self.id = UUID()
+        self.name = name
+        self.createdAt = Date()
+        self.imageCount = 0
+    }
+}
+
 struct ImageAsset: Identifiable {
     let id: UUID
     let filename: String
     let filePath: URL
-    let dateAdded: Date
+    let vaultId: UUID         // Which vault this image belongs to
     let thumbnail: NSImage?
     
-    init(filePath: URL) {
+    init(filePath: URL, vaultId: UUID) {
         self.id = UUID()
         self.filePath = filePath
         self.filename = filePath.lastPathComponent
-        self.dateAdded = Date()
+        self.vaultId = vaultId
+        
         // Avoid loading full-size image synchronously; thumbnails are loaded lazily via cache
         self.thumbnail = nil
     }
@@ -33,9 +48,12 @@ struct ContentView: View {
     @State private var isFullscreen = false
     @State private var colorScheme: ColorScheme = .light
     @State private var isHoveringBottomNav = false
+    @State private var isHoveringFolderButton = false
     @State private var bottomNavOpacity: Double = 1.0
     @State private var isHoveringThemeToggle = false
     @State private var isHoveringFullscreen = false
+    @State private var vaults: [Vault] = []
+    @State private var currentVaultId: UUID? = nil
     @State private var images: [ImageAsset] = []
     @State private var isHoveringImageGrid = false
     @State private var hoveredImageId: UUID? = nil
@@ -44,6 +62,18 @@ struct ContentView: View {
     @State private var quickLookSelectedIndex: Int? = nil
     @State private var isPresentingEmbeddedPreview = false
     @State private var lastColumnCount: Int = 5
+    @State private var showingSidebar = false
+    @State private var hoveredVaultId: UUID? = nil
+    @State private var isHoveringVaults = false
+    @State private var isHoveringVaultsPath = false
+    @State private var editingVaultId: UUID? = nil
+    @State private var editingVaultName: String = ""
+    @State private var showingVaultMenu = false
+    @State private var menuVaultId: UUID? = nil
+    @State private var deletedVaults: [(vault: Vault, deletedAt: Date)] = []
+    @State private var deletedImages: [(image: ImageAsset, backupPath: URL, deletedAt: Date)] = []
+    @State private var skipEmptyConfirmation = false
+    @State private var skipDeleteConfirmation = false
     static let imageCopiedNotification = Notification.Name("VI.ImageCopied")
     
     // File manager and directory setup
@@ -71,6 +101,33 @@ struct ContentView: View {
         return directory
     }()
     
+    // Vaults directory
+    private var vaultsDirectory: URL {
+        let directory = imagesDirectory.appendingPathComponent("Vaults")
+        
+        // Create Vaults directory if it doesn't exist
+        if !FileManager.default.fileExists(atPath: directory.path) {
+            do {
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                print("Successfully created Vaults directory at: \(directory.path)")
+            } catch {
+                print("Error creating Vaults directory: \(error)")
+            }
+        }
+        
+        return directory
+    }
+    
+    // Vaults metadata file
+    private var vaultsMetadataURL: URL {
+        return imagesDirectory.appendingPathComponent("vaults.json")
+    }
+    
+    // Backup directory for undo functionality
+    private var backupDirectory: URL {
+        return imagesDirectory.appendingPathComponent("Backups")
+    }
+    
     // Initialize with saved theme preference if available
     init() {
         // Load saved color scheme preference
@@ -84,13 +141,13 @@ struct ContentView: View {
         let navHeight: CGFloat = 52
         
         HStack(spacing: 0) {
-            // Main content area - will be replaced with image grid
+            // Main content area - Image grid
             ZStack {
                 Color(colorScheme == .light ? .white : .black)
                     .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.6), value: colorScheme)
                 
-                // Image grid area (replacing text editor) - Masonry Layout
+                // Image grid area - Masonry Layout
                 GeometryReader { geo in
                     ScrollView(.vertical, showsIndicators: false) {
                         MasonryGridView(
@@ -181,6 +238,16 @@ struct ContentView: View {
                         
                         // Right side controls
                         HStack(spacing: 8) {
+                            // Live timer
+                            Text(currentTime, style: .time)
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(textColor)
+                                .animation(.easeInOut(duration: 0.6), value: colorScheme)
+                        
+                            Text("•")
+                                .foregroundColor(.gray)
+
+                            // Fullscreen button
                             Button(isFullscreen ? "Minimize" : "Fullscreen") {
                                 if let window = NSApplication.shared.windows.first {
                                     window.toggleFullScreen(nil)
@@ -230,20 +297,30 @@ struct ContentView: View {
                             Text("•")
                                 .foregroundColor(.gray)
                             
-                            // Live timer
-                            Text(currentTime, style: .time)
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(textColor)
-                                .animation(.easeInOut(duration: 0.6), value: colorScheme)
+                            // History button
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    showingSidebar.toggle()
+                                }
+                            }) {
+                                Image(systemName: "folder.fill")
+                                .foregroundColor(isHoveringFolderButton ? textHoverColor : textColor)
+                            }
+                            .buttonStyle(.plain)
+                            .onHover { hovering in
+                                isHoveringFolderButton = hovering
+                                if hovering {
+                                    NSCursor.pointingHand.push()
+                                } else {
+                                    NSCursor.pop()
+                                }
+                            }
                         }
                         .padding(8)
                         .background(Color.clear)
                         .compositingGroup()
                         .shadow(color: (colorScheme == .light ? Color.white.opacity(0.35) : Color.black.opacity(0.35)), radius: 2, x: 0, y: 1)
                         .cornerRadius(6)
-                        .onHover { hovering in
-                            isHoveringBottomNav = hovering
-                        }
                     }
                     .padding(.horizontal, 30)
                     // .padding(.top, 2)
@@ -253,8 +330,82 @@ struct ContentView: View {
                     .opacity(1.2)
                 }
             }
+            .frame(maxWidth: .infinity)
+            
+            // Vaults Sidebar - Only show when toggled
+            if showingSidebar {
+                Divider()
+                
+                    VaultsSidebar(
+                        vaults: vaults,
+                        currentVaultId: $currentVaultId,
+                        colorScheme: colorScheme,
+                        hoveredVaultId: $hoveredVaultId,
+                        isHoveringVaults: $isHoveringVaults,
+                        isHoveringVaultsPath: $isHoveringVaultsPath,
+                        editingVaultId: $editingVaultId,
+                        editingVaultName: $editingVaultName,
+                        onVaultSelected: { vault in
+                            switchToVault(vault)
+                        },
+                        onVaultCreated: {
+                            createNewVault()
+                        },
+                        onVaultNameSaved: { vault in
+                            saveVaultName(vault)
+                        },
+                        onVaultRename: { vault in
+                            editingVaultId = vault.id
+                            editingVaultName = vault.name
+                        },
+                        onVaultEmpty: { vault in
+                            if skipEmptyConfirmation {
+                                emptyVault(vault)
+                            } else {
+                                showConfirmationDialog(
+                                    title: "Empty Vault",
+                                    message: "This will delete all images in '\(vault.name)'. This action can be undone with Cmd+Z within 10 minutes.",
+                                    destructiveButtonTitle: "Empty",
+                                    isDestructive: false,
+                                    skipKey: "skipEmptyConfirmation"
+                                ) {
+                                    emptyVault(vault)
+                                }
+                            }
+                        },
+                        onVaultDelete: { vault in
+                            if skipDeleteConfirmation {
+                                deleteVault(vault)
+                            } else {
+                                showConfirmationDialog(
+                                    title: "Delete Vault",
+                                    message: "This will permanently delete '\(vault.name)' and all its images. This action can be undone with Cmd+Z within 10 minutes.",
+                                    destructiveButtonTitle: "Delete",
+                                    isDestructive: true,
+                                    skipKey: "skipDeleteConfirmation"
+                                ) {
+                                    deleteVault(vault)
+                                }
+                            }
+                        },
+                        onVaultDownloadAll: { vault in
+                            downloadAllImages(from: vault)
+                        },
+                        onResetConfirmations: {
+                            UserDefaults.standard.set(false, forKey: "skipEmptyConfirmation")
+                            UserDefaults.standard.set(false, forKey: "skipDeleteConfirmation")
+                            skipEmptyConfirmation = false
+                            skipDeleteConfirmation = false
+                            print("Reset confirmation dialogs")
+                        },
+                        formatDate: formatVaultDate
+                    )
+                .frame(width: 200)
+                .background(Color(colorScheme == .light ? .white : .black))
+            }
         }
         .frame(minWidth: 1100, minHeight: 600)
+        .animation(.easeInOut(duration: 0.2), value: showingSidebar)
         .preferredColorScheme(colorScheme)
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.willEnterFullScreenNotification)) { _ in
             isFullscreen = true
@@ -263,13 +414,22 @@ struct ContentView: View {
             isFullscreen = false
         }
         .onAppear {
-            loadExistingImages()
+            loadVaults()
+            
+            // Load confirmation preferences
+            skipEmptyConfirmation = UserDefaults.standard.bool(forKey: "skipEmptyConfirmation")
+            skipDeleteConfirmation = UserDefaults.standard.bool(forKey: "skipDeleteConfirmation")
             
             // Start live timer
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 DispatchQueue.main.async {
                     currentTime = Date()
                 }
+            }
+            
+            // Start cleanup timer for expired backups
+            Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+                cleanupExpiredBackups()
             }
 
             // Spacebar Quick Look
@@ -284,6 +444,15 @@ struct ContentView: View {
                         withAnimation(.easeInOut(duration: 0.22)) {
                             isPresentingEmbeddedPreview = false
                         }
+                        return nil
+                    }
+                } else if event.modifierFlags.contains(.command) && event.keyCode == 6 { // Cmd+Z
+                    // Undo functionality
+                    if showingSidebar && !deletedVaults.isEmpty {
+                        undoDeletedVault()
+                        return nil
+                    } else if !deletedImages.isEmpty {
+                        undoDeletedImage()
                         return nil
                     }
                 // Copy image: Command+C or Control+C when preview is open
@@ -322,32 +491,434 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - Image Management Functions
+    // MARK: - Vault Management Functions
     
-    private func loadExistingImages() {
-        print("Looking for images in: \(imagesDirectory.path)")
-        print("Directory exists: \(fileManager.fileExists(atPath: imagesDirectory.path))")
+    private func loadVaults() {
+        // Load vaults from metadata file
+        if fileManager.fileExists(atPath: vaultsMetadataURL.path) {
+            do {
+                let data = try Data(contentsOf: vaultsMetadataURL)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                vaults = try decoder.decode([Vault].self, from: data)
+                print("Loaded \(vaults.count) vaults from metadata")
+            } catch {
+                print("Error loading vaults: \(error)")
+                createDefaultVaults()
+            }
+        } else {
+            createDefaultVaults()
+        }
+        
+        // Load last opened vault
+        if let lastVaultIdString = UserDefaults.standard.string(forKey: "lastOpenedVaultId"),
+           let lastVaultId = UUID(uuidString: lastVaultIdString),
+           vaults.contains(where: { $0.id == lastVaultId }) {
+            currentVaultId = lastVaultId
+        } else if let firstVault = vaults.first {
+            currentVaultId = firstVault.id
+        }
+        
+        // Load images for current vault
+        loadImagesForCurrentVault()
+    }
+    
+    private func createDefaultVaults() {
+        let defaultVault = Vault(name: "All Images")
+        vaults = [defaultVault]
+        currentVaultId = defaultVault.id
+        saveVaults()
+        print("Created default 'All Images' vault")
+    }
+    
+    private func saveVaults() {
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(vaults)
+            try data.write(to: vaultsMetadataURL)
+            print("Saved \(vaults.count) vaults to metadata")
+        } catch {
+            print("Error saving vaults: \(error)")
+        }
+    }
+    
+    private func loadImagesForCurrentVault() {
+        guard let currentVaultId = currentVaultId else {
+            images = []
+            return
+        }
+        
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(currentVaultId.uuidString)
+        
+        // Create vault directory if it doesn't exist
+        if !fileManager.fileExists(atPath: vaultDirectory.path) {
+            do {
+                try fileManager.createDirectory(at: vaultDirectory, withIntermediateDirectories: true)
+                print("Created vault directory: \(vaultDirectory.path)")
+            } catch {
+                print("Error creating vault directory: \(error)")
+                return
+            }
+        }
         
         do {
-            let fileURLs = try fileManager.contentsOfDirectory(at: imagesDirectory, includingPropertiesForKeys: nil)
-            print("All files in directory: \(fileURLs.map { $0.lastPathComponent })")
-            
+            let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
             let imageFiles = fileURLs.filter { url in
                 let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
-                let isImage = supportedTypes.contains(url.pathExtension.lowercased())
-                print("File: \(url.lastPathComponent), Extension: \(url.pathExtension.lowercased()), IsImage: \(isImage)")
-                return isImage
+                return supportedTypes.contains(url.pathExtension.lowercased())
             }
             
-            print("Found \(imageFiles.count) image files")
-            
-            images = imageFiles.map { ImageAsset(filePath: $0) }
-                .sorted { $0.dateAdded > $1.dateAdded }
-            
-            print("Successfully loaded \(images.count) images")
+            images = imageFiles.map { ImageAsset(filePath: $0, vaultId: currentVaultId) }
+            print("Loaded \(images.count) images for current vault")
             
         } catch {
-            print("Error loading directory contents: \(error)")
+            print("Error loading images for vault: \(error)")
+            images = []
+        }
+    }
+    
+    private func createNewVault() {
+        let newVault = Vault(name: "")
+        vaults.append(newVault)
+        saveVaults()
+        
+        // Create vault directory
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(newVault.id.uuidString)
+        do {
+            try fileManager.createDirectory(at: vaultDirectory, withIntermediateDirectories: true)
+            print("Created new vault: \(newVault.name)")
+        } catch {
+            print("Error creating vault directory: \(error)")
+        }
+        
+        // Start editing the new vault name
+        editingVaultId = newVault.id
+        editingVaultName = newVault.name
+        
+        // Ensure the TextField gets focus
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // This ensures the TextField is properly focused
+        }
+    }
+    
+    private func saveVaultName(_ vault: Vault) {
+        if let index = vaults.firstIndex(where: { $0.id == vault.id }) {
+            vaults[index].name = editingVaultName
+            saveVaults()
+            editingVaultId = nil
+            editingVaultName = ""
+            print("Saved vault name: \(editingVaultName)")
+        }
+    }
+    
+    private func switchToVault(_ vault: Vault) {
+        currentVaultId = vault.id
+        UserDefaults.standard.set(vault.id.uuidString, forKey: "lastOpenedVaultId")
+        loadImagesForCurrentVault()
+        print("Switched to vault: \(vault.name)")
+    }
+    
+    private func formatVaultDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        
+        if calendar.isDateInToday(date) {
+            return "Today"
+        } else if calendar.isDateInYesterday(date) {
+            return "Yesterday"
+        } else {
+            // Check if it's in the current year
+            if calendar.component(.year, from: date) == calendar.component(.year, from: Date()) {
+                formatter.dateFormat = "MMM d"
+            } else {
+                formatter.dateFormat = "MMM d yyyy"
+            }
+            return formatter.string(from: date)
+        }
+    }
+    
+    // MARK: - Vault Management Actions
+    
+    private func emptyVault(_ vault: Vault) {
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(vault.id.uuidString)
+        
+        do {
+            // Ensure backup directory exists
+            if !fileManager.fileExists(atPath: backupDirectory.path) {
+                try fileManager.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
+            }
+            
+            let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
+            let imageFiles = fileURLs.filter { url in
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
+                return supportedTypes.contains(url.pathExtension.lowercased())
+            }
+            
+            // Backup images before deletion
+            for imageURL in imageFiles {
+                let backupPath = backupDirectory.appendingPathComponent("\(vault.id.uuidString)_\(imageURL.lastPathComponent)")
+                
+                // Copy to backup location
+                try fileManager.copyItem(at: imageURL, to: backupPath)
+                
+                // Add to undo list with backup path
+                let image = ImageAsset(filePath: imageURL, vaultId: vault.id)
+                deletedImages.append((image: image, backupPath: backupPath, deletedAt: Date()))
+                
+                // Now delete the original
+                try fileManager.removeItem(at: imageURL)
+            }
+            
+            // Update vault image count
+            if let index = vaults.firstIndex(where: { $0.id == vault.id }) {
+                vaults[index].imageCount = 0
+                saveVaults()
+            }
+            
+            // Reload images if this is the current vault
+            if currentVaultId == vault.id {
+                loadImagesForCurrentVault()
+            }
+            
+            print("Emptied vault: \(vault.name)")
+            performHaptic(.levelChange)
+            
+        } catch {
+            print("Error emptying vault: \(error)")
+        }
+    }
+    
+    private func deleteVault(_ vault: Vault) {
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(vault.id.uuidString)
+        
+        do {
+            // Ensure backup directory exists
+            if !fileManager.fileExists(atPath: backupDirectory.path) {
+                try fileManager.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
+            }
+            
+            // Get all images in the vault first
+            let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
+            let imageFiles = fileURLs.filter { url in
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
+                return supportedTypes.contains(url.pathExtension.lowercased())
+            }
+            
+            // Backup images before deletion
+            for imageURL in imageFiles {
+                let backupPath = backupDirectory.appendingPathComponent("\(vault.id.uuidString)_\(imageURL.lastPathComponent)")
+                
+                // Copy to backup location
+                try fileManager.copyItem(at: imageURL, to: backupPath)
+                
+                // Add to undo list with backup path
+                let image = ImageAsset(filePath: imageURL, vaultId: vault.id)
+                deletedImages.append((image: image, backupPath: backupPath, deletedAt: Date()))
+            }
+            
+            // Add vault to undo list
+            deletedVaults.append((vault: vault, deletedAt: Date()))
+            
+            // Delete the entire vault directory
+            try fileManager.removeItem(at: vaultDirectory)
+            
+            // Remove vault from list
+            vaults.removeAll { $0.id == vault.id }
+            saveVaults()
+            
+            // Switch to next available vault or create empty state
+            if currentVaultId == vault.id {
+                if let nextVault = vaults.first {
+                    switchToVault(nextVault)
+                } else {
+                    // Create default vault if none left
+                    createDefaultVaults()
+                }
+            }
+            
+            print("Deleted vault: \(vault.name)")
+            performHaptic(.levelChange)
+            
+        } catch {
+            print("Error deleting vault: \(error)")
+        }
+    }
+    
+    private func downloadAllImages(from vault: Vault) {
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(vault.id.uuidString)
+        
+        do {
+            let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
+            let imageFiles = fileURLs.filter { url in
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
+                return supportedTypes.contains(url.pathExtension.lowercased())
+            }
+            
+            guard !imageFiles.isEmpty else {
+                print("No images to download in vault: \(vault.name)")
+                return
+            }
+            
+            // Create downloads directory for this vault
+            let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            let vaultDownloadsURL = downloadsURL.appendingPathComponent("\(vault.name) - VisualInspiration")
+            
+            // Create directory if it doesn't exist
+            if !fileManager.fileExists(atPath: vaultDownloadsURL.path) {
+                try fileManager.createDirectory(at: vaultDownloadsURL, withIntermediateDirectories: true)
+            }
+            
+            // Copy all images to downloads
+            for imageURL in imageFiles {
+                let destinationURL = vaultDownloadsURL.appendingPathComponent(imageURL.lastPathComponent)
+                try fileManager.copyItem(at: imageURL, to: destinationURL)
+            }
+            
+            print("Downloaded \(imageFiles.count) images to: \(vaultDownloadsURL.path)")
+            performHaptic(.alignment)
+            
+        } catch {
+            print("Error downloading images: \(error)")
+        }
+    }
+    
+    private func undoDeletedVault() {
+        guard let lastDeleted = deletedVaults.last else { return }
+        
+        let now = Date()
+        if now.timeIntervalSince(lastDeleted.deletedAt) > 600 { // 10 minutes
+            deletedVaults.removeLast()
+            return
+        }
+        
+        // Restore vault
+        vaults.append(lastDeleted.vault)
+        saveVaults()
+        
+        // Create vault directory
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(lastDeleted.vault.id.uuidString)
+        do {
+            try fileManager.createDirectory(at: vaultDirectory, withIntermediateDirectories: true)
+        } catch {
+            print("Error recreating vault directory: \(error)")
+        }
+        
+        deletedVaults.removeLast()
+        print("Restored vault: \(lastDeleted.vault.name)")
+        performHaptic(.alignment)
+    }
+    
+    private func undoDeletedImage() {
+        guard let lastDeleted = deletedImages.last else { 
+            print("No deleted images to restore")
+            return 
+        }
+        
+        let now = Date()
+        if now.timeIntervalSince(lastDeleted.deletedAt) > 600 { // 10 minutes
+            print("Undo window expired for image")
+            deletedImages.removeLast()
+            return
+        }
+        
+        // Restore image file from backup
+        do {
+            // Ensure the vault directory exists
+            let vaultDirectory = vaultsDirectory.appendingPathComponent(lastDeleted.image.vaultId.uuidString)
+            if !fileManager.fileExists(atPath: vaultDirectory.path) {
+                try fileManager.createDirectory(at: vaultDirectory, withIntermediateDirectories: true)
+            }
+            
+            // Restore from backup to original location
+            try fileManager.moveItem(at: lastDeleted.backupPath, to: lastDeleted.image.filePath)
+            
+            // Update vault image count
+            if let index = vaults.firstIndex(where: { $0.id == lastDeleted.image.vaultId }) {
+                vaults[index].imageCount += 1
+                saveVaults()
+            }
+            
+            // Reload images if this is the current vault
+            if currentVaultId == lastDeleted.image.vaultId {
+                loadImagesForCurrentVault()
+            }
+            
+            deletedImages.removeLast()
+            print("Restored image: \(lastDeleted.image.filename)")
+            performHaptic(.alignment)
+            
+        } catch {
+            print("Error restoring image: \(error)")
+            deletedImages.removeLast()
+        }
+    }
+    
+    private func cleanupExpiredBackups() {
+        let now = Date()
+        
+        // Clean up expired deleted images
+        deletedImages.removeAll { now.timeIntervalSince($0.deletedAt) > 600 } // 10 minutes
+        
+            // Clean up expired deleted vaults
+            deletedVaults.removeAll { now.timeIntervalSince($0.deletedAt) > 600 } // 10 minutes
+        
+        // Clean up backup files that are no longer needed
+        do {
+            if fileManager.fileExists(atPath: backupDirectory.path) {
+                let backupFiles = try fileManager.contentsOfDirectory(at: backupDirectory, includingPropertiesForKeys: nil)
+                for backupFile in backupFiles {
+                    // Check if this backup is still referenced in our undo lists
+                    let isReferenced = deletedImages.contains { $0.backupPath == backupFile }
+                    if !isReferenced {
+                        try fileManager.removeItem(at: backupFile)
+                        print("Cleaned up expired backup: \(backupFile.lastPathComponent)")
+                    }
+                }
+            }
+        } catch {
+            print("Error cleaning up backups: \(error)")
+        }
+    }
+    
+    private func showConfirmationDialog(
+        title: String,
+        message: String,
+        destructiveButtonTitle: String,
+        isDestructive: Bool,
+        skipKey: String,
+        onConfirm: @escaping () -> Void
+    ) {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: destructiveButtonTitle)
+        alert.addButton(withTitle: "Cancel")
+        
+        if isDestructive {
+            alert.alertStyle = .critical
+        } else {
+            alert.alertStyle = .warning
+        }
+        
+        // Create a checkbox for "Don't ask again"
+        let checkbox = NSButton(checkboxWithTitle: "Don't ask again", target: nil, action: nil)
+        checkbox.state = .off
+        alert.accessoryView = checkbox
+        
+        let response = alert.runModal()
+        
+        if response == .alertFirstButtonReturn {
+            // Check if "Don't ask again" was selected
+            if checkbox.state == .on {
+                UserDefaults.standard.set(true, forKey: skipKey)
+                if skipKey == "skipEmptyConfirmation" {
+                    skipEmptyConfirmation = true
+                } else if skipKey == "skipDeleteConfirmation" {
+                    skipDeleteConfirmation = true
+                }
+            }
+            onConfirm()
         }
     }
     
@@ -386,20 +957,28 @@ struct ContentView: View {
     }
     
     private func saveImage(from url: URL) {
+        guard let currentVaultId = currentVaultId else { return }
+        
         let filename = url.lastPathComponent
-        let destinationURL = imagesDirectory.appendingPathComponent(filename)
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(currentVaultId.uuidString)
+        let destinationURL = vaultDirectory.appendingPathComponent(filename)
         
         print("💾 Saving image from: \(url)")
         print("💾 Destination: \(destinationURL)")
-        print("💾 Directory exists: \(fileManager.fileExists(atPath: imagesDirectory.path))")
         
         do {
-            // Copy file to our directory
+            // Copy file to current vault directory
             try fileManager.copyItem(at: url, to: destinationURL)
             
             // Add to images array
-            let newImage = ImageAsset(filePath: destinationURL)
+            let newImage = ImageAsset(filePath: destinationURL, vaultId: currentVaultId)
             images.insert(newImage, at: 0)
+            
+            // Update vault image count
+            if let index = vaults.firstIndex(where: { $0.id == currentVaultId }) {
+                vaults[index].imageCount += 1
+                saveVaults()
+            }
             
             print("✅ Successfully saved image: \(filename)")
             print("📊 Images array now has \(images.count) items")
@@ -410,14 +989,23 @@ struct ContentView: View {
     }
     
     private func saveImageData(_ data: Data) {
+        guard let currentVaultId = currentVaultId else { return }
+        
         let filename = "image_\(UUID().uuidString).png"
-        let destinationURL = imagesDirectory.appendingPathComponent(filename)
+        let vaultDirectory = vaultsDirectory.appendingPathComponent(currentVaultId.uuidString)
+        let destinationURL = vaultDirectory.appendingPathComponent(filename)
         
         do {
             try data.write(to: destinationURL)
             
-            let newImage = ImageAsset(filePath: destinationURL)
+            let newImage = ImageAsset(filePath: destinationURL, vaultId: currentVaultId)
             images.insert(newImage, at: 0)
+            
+            // Update vault image count
+            if let index = vaults.firstIndex(where: { $0.id == currentVaultId }) {
+                vaults[index].imageCount += 1
+                saveVaults()
+            }
             
             print("Successfully saved image data: \(filename)")
             performHaptic(.alignment)
@@ -430,6 +1018,13 @@ struct ContentView: View {
         do {
             try fileManager.removeItem(at: image.filePath)
             images.removeAll { $0.id == image.id }
+            
+            // Update vault image count
+            if let index = vaults.firstIndex(where: { $0.id == image.vaultId }) {
+                vaults[index].imageCount = max(0, vaults[index].imageCount - 1)
+                saveVaults()
+            }
+            
             performHaptic(.levelChange)
             print("🗑️ Deleted image: \(image.filename)")
         } catch {
@@ -554,7 +1149,7 @@ struct MasonryGridView: View {
             }
         }
         .onAppear { onColumnCountChange(columnCount) }
-        .onChange(of: availableWidth) { _ in onColumnCountChange(getColumnCount(for: availableWidth)) }
+        .onChange(of: availableWidth) { onColumnCountChange(getColumnCount(for: availableWidth)) }
     }
     
     private func getColumnCount(for width: CGFloat) -> Int {
@@ -686,7 +1281,7 @@ struct EmbeddedPreviewOverlay: View {
             }
         }
         .onAppear { index = min(max(0, selectedIndex), urls.count - 1) }
-        .onChange(of: index) { newValue in
+        .onChange(of: index) { _, newValue in
             selectedIndex = newValue
         }
     }
@@ -858,6 +1453,261 @@ struct MasonryImageThumbnailView: View {
             thumbnailImage = nsImage
         }
         #endif
+    }
+}
+
+// MARK: - Vaults Sidebar
+struct VaultsSidebar: View {
+    let vaults: [Vault]
+    @Binding var currentVaultId: UUID?
+    let colorScheme: ColorScheme
+    @Binding var hoveredVaultId: UUID?
+    @Binding var isHoveringVaults: Bool
+    @Binding var isHoveringVaultsPath: Bool
+    @Binding var editingVaultId: UUID?
+    @Binding var editingVaultName: String
+    let onVaultSelected: (Vault) -> Void
+    let onVaultCreated: () -> Void
+    let onVaultNameSaved: (Vault) -> Void
+    let onVaultRename: (Vault) -> Void
+    let onVaultEmpty: (Vault) -> Void
+    let onVaultDelete: (Vault) -> Void
+    let onVaultDownloadAll: (Vault) -> Void
+    let onResetConfirmations: () -> Void
+    let formatDate: (Date) -> String
+    
+    var textColor: Color {
+        colorScheme == .light ? Color.gray : Color.gray.opacity(0.8)
+    }
+    
+    var textHoverColor: Color {
+        colorScheme == .light ? Color.black : Color.white
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header with + button
+            HStack {
+                Button(action: {
+                    NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: getImagesDirectory().path)
+                }) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 4) {
+                            Text("Vaults")
+                                .font(.system(size: 13))
+                                .foregroundColor(isHoveringVaults ? textHoverColor : textColor)
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 10))
+                                .foregroundColor(isHoveringVaults ? textHoverColor : textColor)
+                        }
+                        Text(getImagesDirectory().path)
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .buttonStyle(.plain)
+                .onHover { hovering in
+                    isHoveringVaults = hovering
+                }
+                
+                Spacer()
+                
+                // + Button for creating new vaults
+                Button(action: onVaultCreated) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 12))
+                        .foregroundColor(textColor)
+                }
+                .buttonStyle(.plain)
+                .onHover { hovering in
+                    if hovering {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            
+            Divider()
+            
+            // Vaults List
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(vaults) { vault in
+                        VaultRow(
+                            vault: vault,
+                            isSelected: vault.id == currentVaultId,
+                            isHovered: vault.id == hoveredVaultId,
+                            isEditing: vault.id == editingVaultId,
+                            editingName: $editingVaultName,
+                            formatDate: formatDate,
+                            onSelected: {
+                                if vault.id != currentVaultId {
+                                    onVaultSelected(vault)
+                                }
+                            },
+                            onNameSaved: {
+                                onVaultNameSaved(vault)
+                            },
+                            onRename: { vault in
+                                onVaultRename(vault)
+                            },
+                            onEmpty: { vault in
+                                onVaultEmpty(vault)
+                            },
+                            onDelete: { vault in
+                                onVaultDelete(vault)
+                            },
+                            onDownloadAll: { vault in
+                                onVaultDownloadAll(vault)
+                            },
+                            onResetConfirmations: {
+                                onResetConfirmations()
+                            }
+                        )
+                        .onHover { hovering in
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                hoveredVaultId = hovering ? vault.id : nil
+                            }
+                        }
+                        
+                        if vault.id != vaults.last?.id {
+                            Divider()
+                        }
+                    }
+                }
+            }
+            .scrollIndicators(.never)
+        }
+        .background(Color(colorScheme == .light ? .white : .black))
+    }
+    
+    private func getImagesDirectory() -> URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("VisualInspiration")
+    }
+}
+
+// MARK: - Vault Row
+        struct VaultRow: View {
+            let vault: Vault
+            let isSelected: Bool
+            let isHovered: Bool
+            let isEditing: Bool
+            @Binding var editingName: String
+            let formatDate: (Date) -> String
+            let onSelected: () -> Void
+            let onNameSaved: () -> Void
+            let onRename: (Vault) -> Void
+            let onEmpty: (Vault) -> Void
+            let onDelete: (Vault) -> Void
+            let onDownloadAll: (Vault) -> Void
+            let onResetConfirmations: () -> Void
+            @State private var tempName: String = ""
+            @FocusState private var isTextFieldFocused: Bool
+    
+    var body: some View {
+        Button(action: onSelected) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        if isEditing {
+                            TextField("", text: $tempName)
+                                .placeholder(when: tempName.isEmpty) {
+                                    Text("Vault name")
+                                        .foregroundColor(.secondary)
+                                }
+                                .textFieldStyle(.plain)
+                                .font(.system(size: 13))
+                                .foregroundColor(.primary)
+                                .focused($isTextFieldFocused)
+                                .onSubmit {
+                                    editingName = tempName
+                                    onNameSaved()
+                                }
+                                .onAppear {
+                                    tempName = vault.name.isEmpty ? "" : vault.name
+                                    // Auto-focus when editing starts
+                                    DispatchQueue.main.async {
+                                        isTextFieldFocused = true
+                                    }
+                                }
+                                .onTapGesture {
+                                    // Ensure focus when tapping
+                                    isTextFieldFocused = true
+                                }
+                        } else {
+                            Text(vault.name.isEmpty ? "Vault name" : vault.name)
+                                .font(.system(size: 13))
+                                .lineLimit(1)
+                                .foregroundColor(vault.name.isEmpty ? .secondary : .primary)
+                        }
+                        
+                        Spacer()
+                    }
+                    
+                    Text(formatDate(vault.createdAt))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(backgroundColor)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
+        .contextMenu {
+            Button("Rename") {
+                onRename(vault)
+            }
+            Button("Empty") {
+                onEmpty(vault)
+            }
+            Button("Delete Vault") {
+                onDelete(vault)
+            }
+            Button("Download All") {
+                onDownloadAll(vault)
+            }
+            Divider()
+            Button("Reset Confirmations") {
+                onResetConfirmations()
+            }
+        }
+        .onAppear {
+            NSCursor.pop()  // Reset cursor when button appears
+        }
+    }
+    
+    private var backgroundColor: Color {
+        if isSelected {
+            return Color.gray.opacity(0.1)  // More subtle selection highlight
+        } else if isHovered {
+            return Color.gray.opacity(0.05)  // Even more subtle hover state
+        } else {
+            return Color.clear
+        }
+    }
+}
+
+// MARK: - View Extensions
+extension View {
+    func placeholder<Content: View>(
+        when condition: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content) -> some View {
+        
+        ZStack(alignment: alignment) {
+            placeholder().opacity(condition ? 1 : 0)
+            self
+        }
     }
 }
 
