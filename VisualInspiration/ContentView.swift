@@ -166,6 +166,12 @@ struct ContentView: View {
                             },
                             onDeleteRequested: { image in
                                 deleteImage(image)
+                            },
+                            onCopyImage: { url in
+                                copyImageToPasteboard(url)
+                            },
+                            onDownloadImage: { image in
+                                downloadSingleImage(image)
                             }
                         )
                         .padding(30)
@@ -191,6 +197,9 @@ struct ContentView: View {
                                     withAnimation(.easeInOut(duration: 0.22)) {
                                         isPresentingEmbeddedPreview = false
                                     }
+                                },
+                                onDownloadImage: { image in
+                                    downloadSingleImage(image)
                                 }
                             )
                             .transition(.opacity)
@@ -1304,6 +1313,8 @@ struct MasonryGridView: View {
     let onColumnCountChange: (Int) -> Void
     let onPreviewRequested: (Int) -> Void
     let onDeleteRequested: (ImageAsset) -> Void
+    let onCopyImage: (URL) -> Void
+    let onDownloadImage: (ImageAsset) -> Void
     
     var body: some View {
         let columnCount = getColumnCount(for: availableWidth)
@@ -1328,6 +1339,20 @@ struct MasonryGridView: View {
                             // Quick Look on single-click
                             if let index = images.firstIndex(where: { $0.id == image.id }) {
                                 onPreviewRequested(index)
+                            }
+                        }
+                        .contextMenu {
+                            let fileExtension = image.filePath.pathExtension.lowercased()
+                            let isGIF = fileExtension == "gif"
+                            
+                            if !isGIF {
+                                Button("Copy Image") {
+                                    onCopyImage(image.filePath)
+                                }
+                            }
+                            
+                            Button("Download") {
+                                onDownloadImage(image)
                             }
                         }
                     }
@@ -1376,7 +1401,10 @@ extension ContentView {
 
     private func copyCurrentPreviewToPasteboard() {
         guard let idx = quickLookSelectedIndex, images.indices.contains(idx) else { return }
-        let url = images[idx].filePath
+        copyImageToPasteboard(images[idx].filePath)
+    }
+    
+    private func copyImageToPasteboard(_ url: URL) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         if let image = NSImage(contentsOf: url) {
@@ -1386,6 +1414,89 @@ extension ContentView {
         performHaptic(.generic)
         print("📋 Copied image to pasteboard: \(url.lastPathComponent)")
         NotificationCenter.default.post(name: Self.imageCopiedNotification, object: nil)
+    }
+    
+    private func downloadSingleImage(_ image: ImageAsset) {
+        let fileExtension = image.filePath.pathExtension.lowercased()
+        
+        if rememberDownloadLocation, let savedLocation = savedDownloadLocation {
+            let fileName = "\(image.filePath.deletingPathExtension().lastPathComponent) - VisualInspiration.\(fileExtension)"
+            let destinationURL = savedLocation.appendingPathComponent(fileName)
+            
+            do {
+                try FileManager.default.copyItem(at: image.filePath, to: destinationURL)
+                showDownloadSuccessAlert(fileName: fileName)
+                print("✅ Downloaded single file: \(fileName)")
+            } catch {
+                showDownloadErrorAlert(error: error)
+                print("❌ Failed to download single file: \(error)")
+            }
+        } else {
+            showSingleDownloadSavePanel(image: image)
+        }
+    }
+    
+    private func showSingleDownloadSavePanel(image: ImageAsset) {
+        let savePanel = NSSavePanel()
+        savePanel.title = "Download File"
+        savePanel.message = "Choose where to save '\(image.filePath.lastPathComponent)'"
+        savePanel.nameFieldStringValue = image.filePath.lastPathComponent
+        savePanel.canCreateDirectories = true
+        savePanel.isExtensionHidden = false
+        
+        let checkbox = NSButton(checkboxWithTitle: "Remember this location", target: nil, action: nil)
+        checkbox.state = rememberDownloadLocation ? .on : .off
+        savePanel.accessoryView = checkbox
+        
+        savePanel.begin { response in
+            if response == .OK, let chosenURL = savePanel.url {
+                if checkbox.state == .on {
+                    DispatchQueue.main.async {
+                        self.rememberDownloadLocation = true
+                        UserDefaults.standard.set(true, forKey: "rememberDownloadLocation")
+                        let directoryURL = chosenURL.deletingLastPathComponent()
+                        if let locationData = try? NSKeyedArchiver.archivedData(withRootObject: directoryURL, requiringSecureCoding: false) {
+                            UserDefaults.standard.set(locationData, forKey: "savedDownloadLocation")
+                            self.savedDownloadLocation = directoryURL
+                        }
+                        self.performSingleDownload(image: image, to: chosenURL)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.performSingleDownload(image: image, to: chosenURL)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func performSingleDownload(image: ImageAsset, to destinationURL: URL) {
+        do {
+            try FileManager.default.copyItem(at: image.filePath, to: destinationURL)
+            showDownloadSuccessAlert(fileName: destinationURL.lastPathComponent)
+            print("✅ Downloaded single file: \(destinationURL.lastPathComponent)")
+        } catch {
+            showDownloadErrorAlert(error: error)
+            print("❌ Failed to download single file: \(error)")
+        }
+    }
+    
+    private func showDownloadSuccessAlert(fileName: String) {
+        let alert = NSAlert()
+        alert.messageText = "Download Successful"
+        alert.informativeText = "File '\(fileName)' has been downloaded successfully."
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+    
+    private func showDownloadErrorAlert(error: Error) {
+        let alert = NSAlert()
+        alert.messageText = "Download Failed"
+        alert.informativeText = "Failed to download file: \(error.localizedDescription)"
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 }
 
@@ -1443,6 +1554,7 @@ struct EmbeddedPreviewOverlay: View {
     let urls: [URL]
     @Binding var selectedIndex: Int
     let onClose: () -> Void
+    let onDownloadImage: (ImageAsset) -> Void
     @State private var index: Int = 0
 
     var body: some View {
@@ -1472,11 +1584,12 @@ struct EmbeddedPreviewOverlay: View {
                                     .cornerRadius(10)
                                     // Transparent overlay for double-click and context menu
                                     .onTapGesture(count: 2) {
-                                        copyToPasteboard(currentURL)
+                                        // Double-click on GIFs does nothing (can't copy)
                                     }
                                     .contextMenu {
-                                        Button("Copy Image") {
-                                            copyToPasteboard(currentURL)
+                                        Button("Download") {
+                                            let imageAsset = ImageAsset(filePath: currentURL, vaultId: UUID())
+                                            onDownloadImage(imageAsset)
                                         }
                                     }
                             } else {
@@ -1493,6 +1606,10 @@ struct EmbeddedPreviewOverlay: View {
                                     .contextMenu {
                                         Button("Copy Image") {
                                             copyToPasteboard(currentURL)
+                                        }
+                                        Button("Download") {
+                                            let imageAsset = ImageAsset(filePath: currentURL, vaultId: UUID())
+                                            onDownloadImage(imageAsset)
                                         }
                                     }
                             }
