@@ -8,6 +8,7 @@
 import SwiftUI
 import AppKit
 import UniformTypeIdentifiers
+import AVFoundation
 #if canImport(QuickLookUI)
 import QuickLookUI
 #endif
@@ -74,6 +75,8 @@ struct ContentView: View {
     @State private var deletedImages: [(image: ImageAsset, backupPath: URL, deletedAt: Date)] = []
     @State private var skipEmptyConfirmation = false
     @State private var skipDeleteConfirmation = false
+    @State private var rememberDownloadLocation = false
+    @State private var savedDownloadLocation: URL? = nil
     static let imageCopiedNotification = Notification.Name("VI.ImageCopied")
     
     // File manager and directory setup
@@ -172,7 +175,7 @@ struct ContentView: View {
                 .padding(.bottom, navHeight)
                 .background(Color(colorScheme == .light ? .white : .black))
                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
-                .onDrop(of: [.image], isTargeted: nil) { providers in
+                .onDrop(of: [.image, .movie], isTargeted: nil) { providers in
                     handleImageDrop(providers: providers)
                 }
                 .overlay(
@@ -398,6 +401,13 @@ struct ContentView: View {
                             skipDeleteConfirmation = false
                             print("Reset confirmation dialogs")
                         },
+                        onResetDownloadLocation: {
+                            UserDefaults.standard.set(false, forKey: "rememberDownloadLocation")
+                            UserDefaults.standard.removeObject(forKey: "savedDownloadLocation")
+                            rememberDownloadLocation = false
+                            savedDownloadLocation = nil
+                            print("Reset download location preference")
+                        },
                         formatDate: formatVaultDate
                     )
                 .frame(width: 200)
@@ -419,6 +429,13 @@ struct ContentView: View {
             // Load confirmation preferences
             skipEmptyConfirmation = UserDefaults.standard.bool(forKey: "skipEmptyConfirmation")
             skipDeleteConfirmation = UserDefaults.standard.bool(forKey: "skipDeleteConfirmation")
+            rememberDownloadLocation = UserDefaults.standard.bool(forKey: "rememberDownloadLocation")
+            
+            // Load saved download location
+            if let savedLocationData = UserDefaults.standard.data(forKey: "savedDownloadLocation"),
+               let savedLocation = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSURL.self, from: savedLocationData) {
+                savedDownloadLocation = savedLocation as URL?
+            }
             
             // Start live timer
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
@@ -446,6 +463,10 @@ struct ContentView: View {
                         }
                         return nil
                     }
+                } else if event.modifierFlags.contains(.command) && event.keyCode == 9 { // Cmd+V
+                    // Paste images from clipboard
+                    handlePasteImage()
+                    return nil
                 } else if event.modifierFlags.contains(.command) && event.keyCode == 6 { // Cmd+Z
                     // Undo functionality
                     if showingSidebar && !deletedVaults.isEmpty {
@@ -565,12 +586,12 @@ struct ContentView: View {
         do {
             let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
             let imageFiles = fileURLs.filter { url in
-                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp", "mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
                 return supportedTypes.contains(url.pathExtension.lowercased())
             }
             
             images = imageFiles.map { ImageAsset(filePath: $0, vaultId: currentVaultId) }
-            print("Loaded \(images.count) images for current vault")
+            print("Loaded \(images.count) media files for current vault")
             
         } catch {
             print("Error loading images for vault: \(error)")
@@ -651,7 +672,7 @@ struct ContentView: View {
             
             let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
             let imageFiles = fileURLs.filter { url in
-                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp", "mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
                 return supportedTypes.contains(url.pathExtension.lowercased())
             }
             
@@ -701,7 +722,7 @@ struct ContentView: View {
             // Get all images in the vault first
             let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
             let imageFiles = fileURLs.filter { url in
-                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp", "mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
                 return supportedTypes.contains(url.pathExtension.lowercased())
             }
             
@@ -748,38 +769,153 @@ struct ContentView: View {
     private func downloadAllImages(from vault: Vault) {
         let vaultDirectory = vaultsDirectory.appendingPathComponent(vault.id.uuidString)
         
+        print("🔍 Download All - Vault: \(vault.name)")
+        print("🔍 Vault Directory: \(vaultDirectory.path)")
+        print("🔍 Directory exists: \(fileManager.fileExists(atPath: vaultDirectory.path))")
+        
         do {
             let fileURLs = try fileManager.contentsOfDirectory(at: vaultDirectory, includingPropertiesForKeys: nil)
+            print("🔍 All files found: \(fileURLs.count)")
+            
             let imageFiles = fileURLs.filter { url in
-                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp"]
-                return supportedTypes.contains(url.pathExtension.lowercased())
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp", "mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
+                let isImage = supportedTypes.contains(url.pathExtension.lowercased())
+                print("🔍 File: \(url.lastPathComponent) - Is image: \(isImage)")
+                return isImage
             }
             
+            print("🔍 Media files found: \(imageFiles.count)")
+            
             guard !imageFiles.isEmpty else {
-                print("No images to download in vault: \(vault.name)")
+                print("❌ No media files to download in vault: \(vault.name)")
+                // Show user feedback
+                let alert = NSAlert()
+                alert.messageText = "No Media to Download"
+                alert.informativeText = "The vault '\(vault.name)' doesn't contain any images or videos."
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
                 return
             }
             
-            // Create downloads directory for this vault
-            let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-            let vaultDownloadsURL = downloadsURL.appendingPathComponent("\(vault.name) - VisualInspiration")
-            
-            // Create directory if it doesn't exist
-            if !fileManager.fileExists(atPath: vaultDownloadsURL.path) {
-                try fileManager.createDirectory(at: vaultDownloadsURL, withIntermediateDirectories: true)
+            // Check if we should use saved location or show picker
+            if rememberDownloadLocation, let savedLocation = savedDownloadLocation {
+                // Use saved location
+                let destinationURL = savedLocation.appendingPathComponent("\(vault.name) - VisualInspiration")
+                DispatchQueue.main.async {
+                    self.performDownload(imageFiles: imageFiles, to: destinationURL, vaultName: vault.name)
+                }
+            } else {
+                // Show save panel with remember option
+                self.showDownloadSavePanel(imageFiles: imageFiles, vaultName: vault.name)
             }
-            
-            // Copy all images to downloads
-            for imageURL in imageFiles {
-                let destinationURL = vaultDownloadsURL.appendingPathComponent(imageURL.lastPathComponent)
-                try fileManager.copyItem(at: imageURL, to: destinationURL)
-            }
-            
-            print("Downloaded \(imageFiles.count) images to: \(vaultDownloadsURL.path)")
-            performHaptic(.alignment)
             
         } catch {
-            print("Error downloading images: \(error)")
+            print("❌ Error downloading images: \(error)")
+            
+            // Show error feedback to user
+            let alert = NSAlert()
+            alert.messageText = "Download Failed"
+            alert.informativeText = "Failed to access vault directory: \(error.localizedDescription)"
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+        }
+    }
+    
+    private func showDownloadSavePanel(imageFiles: [URL], vaultName: String) {
+        let savePanel = NSSavePanel()
+        savePanel.title = "Choose Download Location"
+        savePanel.message = "Choose where to save the images from '\(vaultName)' vault"
+        savePanel.nameFieldStringValue = "\(vaultName) - VisualInspiration"
+        savePanel.canCreateDirectories = true
+        savePanel.isExtensionHidden = false
+        
+        // Add "Remember this location" checkbox
+        let checkbox = NSButton(checkboxWithTitle: "Remember this location", target: nil, action: nil)
+        checkbox.state = rememberDownloadLocation ? .on : .off
+        savePanel.accessoryView = checkbox
+        
+        savePanel.begin { response in
+            if response == .OK, let chosenURL = savePanel.url {
+                // Check if "Remember this location" was selected
+                if checkbox.state == .on {
+                    DispatchQueue.main.async {
+                        self.rememberDownloadLocation = true
+                        UserDefaults.standard.set(true, forKey: "rememberDownloadLocation")
+                        
+                        // Save the directory (parent of the file)
+                        let directoryURL = chosenURL.deletingLastPathComponent()
+                        if let locationData = try? NSKeyedArchiver.archivedData(withRootObject: directoryURL, requiringSecureCoding: false) {
+                            UserDefaults.standard.set(locationData, forKey: "savedDownloadLocation")
+                            self.savedDownloadLocation = directoryURL
+                        }
+                        
+                        // Perform download to the chosen location
+                        let destinationURL = directoryURL.appendingPathComponent("\(vaultName) - VisualInspiration")
+                        self.performDownload(imageFiles: imageFiles, to: destinationURL, vaultName: vaultName)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.performDownload(imageFiles: imageFiles, to: chosenURL, vaultName: vaultName)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func performDownload(imageFiles: [URL], to destinationURL: URL, vaultName: String) {
+        do {
+            print("🔍 Destination URL: \(destinationURL.path)")
+            
+            // Create directory if it doesn't exist
+            if !fileManager.fileExists(atPath: destinationURL.path) {
+                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+                print("✅ Created download directory")
+            } else {
+                print("✅ Download directory already exists")
+            }
+            
+            // Copy all images to chosen location
+            var successCount = 0
+            for imageURL in imageFiles {
+                let destinationFileURL = destinationURL.appendingPathComponent(imageURL.lastPathComponent)
+                print("🔍 Copying: \(imageURL.lastPathComponent) to \(destinationFileURL.path)")
+                
+                // Check if file already exists and handle it
+                if fileManager.fileExists(atPath: destinationFileURL.path) {
+                    print("⚠️ File already exists, skipping: \(imageURL.lastPathComponent)")
+                    continue
+                }
+                
+                try fileManager.copyItem(at: imageURL, to: destinationFileURL)
+                successCount += 1
+                print("✅ Copied: \(imageURL.lastPathComponent)")
+            }
+            
+            print("✅ Downloaded \(successCount) media files to: \(destinationURL.path)")
+            performHaptic(.alignment)
+            
+            // Show success feedback to user
+            let alert = NSAlert()
+            alert.messageText = "Download Complete"
+            alert.informativeText = "Successfully downloaded \(successCount) media files to:\n\(destinationURL.path)"
+            alert.addButton(withTitle: "OK")
+            alert.addButton(withTitle: "Show in Finder")
+            
+            let response = alert.runModal()
+            if response == .alertSecondButtonReturn {
+                // Show in Finder
+                NSWorkspace.shared.activateFileViewerSelecting([destinationURL])
+            }
+            
+        } catch {
+            print("❌ Error copying media files: \(error)")
+            
+            // Show error feedback to user
+            let alert = NSAlert()
+            alert.messageText = "Download Failed"
+            alert.informativeText = "Failed to copy media files: \(error.localizedDescription)"
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
         }
     }
     
@@ -922,6 +1058,54 @@ struct ContentView: View {
         }
     }
     
+    private func handlePasteImage() {
+        print("📋 Paste triggered")
+        
+        let pasteboard = NSPasteboard.general
+        
+        // Check for image data in pasteboard
+        if let imageData = pasteboard.data(forType: .tiff) ?? pasteboard.data(forType: .png) {
+            print("📊 Found image data in pasteboard: \(imageData.count) bytes")
+            saveImageData(imageData)
+            return
+        }
+        
+        // Check for file URLs in pasteboard
+        if let fileURLs = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
+            print("🔗 Found \(fileURLs.count) file URLs in pasteboard")
+            for url in fileURLs {
+                // Check if it's an image or video file
+                let supportedTypes = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "webp", "mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
+                if supportedTypes.contains(url.pathExtension.lowercased()) {
+                    print("✅ Found media file: \(url.lastPathComponent)")
+                    saveImage(from: url)
+                }
+            }
+            return
+        }
+        
+        // Check for NSImage objects in pasteboard
+        if let images = pasteboard.readObjects(forClasses: [NSImage.self], options: nil) as? [NSImage], let image = images.first {
+            print("🖼️ Found NSImage in pasteboard")
+            if let imageData = image.tiffRepresentation {
+                saveImageData(imageData)
+            } else if let bitmapRep = image.representations.first as? NSBitmapImageRep,
+                      let pngData = bitmapRep.representation(using: .png, properties: [:]) {
+                saveImageData(pngData)
+            }
+            return
+        }
+        
+        print("❌ No media data found in pasteboard")
+        
+        // Show user feedback
+        let alert = NSAlert()
+        alert.messageText = "No Media to Paste"
+        alert.informativeText = "The clipboard doesn't contain any images or videos. Copy media first, then try pasting."
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+    
     private func handleImageDrop(providers: [NSItemProvider]) -> Bool {
         print("🖱️ Drag & Drop triggered with \(providers.count) providers")
         var hasHandledDrop = false
@@ -929,10 +1113,12 @@ struct ContentView: View {
         for (index, provider) in providers.enumerated() {
             print("📦 Provider \(index): \(provider)")
             print("📦 Has image type: \(provider.hasItemConformingToTypeIdentifier(UTType.image.identifier))")
+            print("📦 Has movie type: \(provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier))")
             
-            if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-                print("✅ Found image provider, loading item...")
-                provider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { (item, error) in
+            if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) || provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
+                print("✅ Found media provider, loading item...")
+                let typeIdentifier = provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) ? UTType.image.identifier : UTType.movie.identifier
+                provider.loadItem(forTypeIdentifier: typeIdentifier, options: nil) { (item, error) in
                     print("📥 Load item callback - Item: \(String(describing: item)), Error: \(String(describing: error))")
                     DispatchQueue.main.async {
                         if let url = item as? URL {
@@ -948,7 +1134,7 @@ struct ContentView: View {
                 }
                 hasHandledDrop = true
             } else {
-                print("❌ Provider doesn't conform to image type")
+                print("❌ Provider doesn't conform to image or movie type")
             }
         }
         
@@ -1210,6 +1396,45 @@ extension ContentView {
     }
 }
 
+// MARK: - GIF Image View
+struct GIFImageView: NSViewRepresentable {
+    let nsImage: NSImage
+    let width: CGFloat
+    let isHovered: Bool
+    let isInViewport: Bool
+    
+    func makeNSView(context: Context) -> NSImageView {
+        let imageView = NSImageView()
+        imageView.image = nsImage
+        imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.animates = isHovered || isInViewport // Animate when hovered OR in viewport
+        return imageView
+    }
+    
+    func updateNSView(_ nsView: NSImageView, context: Context) {
+        nsView.image = nsImage
+        nsView.animates = isHovered || isInViewport // Animate when hovered OR in viewport
+    }
+}
+
+// MARK: - GIF Preview View
+struct GIFPreviewView: NSViewRepresentable {
+    let url: URL
+    
+    func makeNSView(context: Context) -> NSImageView {
+        let imageView = NSImageView()
+        imageView.image = NSImage(contentsOf: url)
+        imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.animates = true // Enable animation for GIFs
+        return imageView
+    }
+    
+    func updateNSView(_ nsView: NSImageView, context: Context) {
+        nsView.image = NSImage(contentsOf: url)
+        nsView.animates = true // Ensure animation is always enabled
+    }
+}
+
 // MARK: - QuickLookPreviewer Helper
 final class QuickLookPreviewer: NSObject {}
 
@@ -1234,22 +1459,46 @@ struct EmbeddedPreviewOverlay: View {
 
                     ZStack {
                         let arrowSize: CGFloat = 36
-                        QuickLookRepresentable(url: urls[index])
-                            .frame(width: fitted.width, height: fitted.height)
-                            .clipped()
-                            .background(Color.black.opacity(0.2))
-                            .cornerRadius(10)
-                            // Transparent overlay for double-click and context menu
-                            .onTapGesture(count: 2) {
-                                copyToPasteboard(urls[index])
+                        let currentURL = urls[index]
+                        let isGIF = currentURL.pathExtension.lowercased() == "gif"
+                        
+                        Group {
+                            if isGIF {
+                                // For GIFs, use a custom view that preserves animation
+                                GIFPreviewView(url: currentURL)
+                                    .frame(width: fitted.width, height: fitted.height)
+                                    .clipped()
+                                    .background(Color.black.opacity(0.2))
+                                    .cornerRadius(10)
+                                    // Transparent overlay for double-click and context menu
+                                    .onTapGesture(count: 2) {
+                                        copyToPasteboard(currentURL)
+                                    }
+                                    .contextMenu {
+                                        Button("Copy Image") {
+                                            copyToPasteboard(currentURL)
+                                        }
+                                    }
+                            } else {
+                                // For other files, use QuickLook
+                                QuickLookRepresentable(url: currentURL)
+                                    .frame(width: fitted.width, height: fitted.height)
+                                    .clipped()
+                                    .background(Color.black.opacity(0.2))
+                                    .cornerRadius(10)
+                                    // Transparent overlay for double-click and context menu
+                                    .onTapGesture(count: 2) {
+                                        copyToPasteboard(currentURL)
+                                    }
+                                    .contextMenu {
+                                        Button("Copy Image") {
+                                            copyToPasteboard(currentURL)
+                                        }
+                                    }
                             }
-                            .contextMenu {
-                                Button("Copy Image") {
-                                    copyToPasteboard(urls[index])
-                                }
-                            }
-                            // Left arrow straddling edge (only when there is a previous image)
-                            .overlay(alignment: .leading) {
+                        }
+                        // Left arrow straddling edge (only when there is a previous image)
+                        .overlay(alignment: .leading) {
                                 if urls.count > 1 && index > 0 {
                                     Button(action: { index -= 1 }) {
                                         Image(systemName: "chevron.left.circle.fill")
@@ -1362,6 +1611,7 @@ struct MasonryImageThumbnailView: View {
     let width: CGFloat
     let onDelete: () -> Void
     @State private var isHovered = false
+    @State private var isInViewport = false
     @State private var thumbnailImage: NSImage? = nil
     private static let thumbnailCache = NSCache<NSString, NSImage>()
     
@@ -1369,34 +1619,83 @@ struct MasonryImageThumbnailView: View {
         ZStack(alignment: .topLeading) {
             Group {
                 if let thumbnail = thumbnailImage ?? Self.thumbnailCache.object(forKey: image.filePath.path as NSString) {
-                    Image(nsImage: thumbnail)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: width)
-                        .background(Color.gray.opacity(0.10))
-                        .cornerRadius(8)
-                        .animation(.easeInOut(duration: 0.12), value: isHovered)
-                        .overlay(
-                            Group {
-                                if isHovered {
-                                    // Darker overlay in light mode, lighter overlay in dark mode
-                                    let edgeColor = (colorScheme == .light)
-                                        ? Color.black.opacity(0.22)
-                                        : Color.white.opacity(0.18)
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: edgeColor, location: 0.0),
-                                            .init(color: .clear, location: 0.5),
-                                            .init(color: edgeColor, location: 1.0)
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                    .cornerRadius(8)
-                                    .transition(.opacity)
+                    let fileExtension = image.filePath.pathExtension.lowercased()
+                    let isGIF = fileExtension == "gif"
+                    let isVideo = ["mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"].contains(fileExtension)
+                    
+                    if isGIF {
+                        // For GIFs, use a custom view that preserves animation
+                        GIFImageView(nsImage: thumbnail, width: width, isHovered: isHovered, isInViewport: isInViewport)
+                            .background(Color.gray.opacity(0.10))
+                            .cornerRadius(8)
+                            .animation(.easeInOut(duration: 0.12), value: isHovered)
+                            .overlay(
+                                Group {
+                                    if isHovered {
+                                        // Darker overlay in light mode, lighter overlay in dark mode
+                                        let edgeColor = (colorScheme == .light)
+                                            ? Color.black.opacity(0.22)
+                                            : Color.white.opacity(0.18)
+                                        LinearGradient(
+                                            gradient: Gradient(stops: [
+                                                .init(color: edgeColor, location: 0.0),
+                                                .init(color: .clear, location: 0.5),
+                                                .init(color: edgeColor, location: 1.0)
+                                            ]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                        .cornerRadius(8)
+                                        .transition(.opacity)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                    } else {
+                        // For videos and static images, use regular Image view
+                        Image(nsImage: thumbnail)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: width)
+                            .background(Color.gray.opacity(0.10))
+                            .cornerRadius(8)
+                            .animation(.easeInOut(duration: 0.12), value: isHovered)
+                            .overlay(
+                                Group {
+                                    if isHovered {
+                                        // Darker overlay in light mode, lighter overlay in dark mode
+                                        let edgeColor = (colorScheme == .light)
+                                            ? Color.black.opacity(0.22)
+                                            : Color.white.opacity(0.18)
+                                        LinearGradient(
+                                            gradient: Gradient(stops: [
+                                                .init(color: edgeColor, location: 0.0),
+                                                .init(color: .clear, location: 0.5),
+                                                .init(color: edgeColor, location: 1.0)
+                                            ]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                        .cornerRadius(8)
+                                        .transition(.opacity)
+                                    }
+                                    
+                                    // Video play icon overlay
+                                    if isVideo {
+                                        VStack {
+                                            Spacer()
+                                            HStack {
+                                                Spacer()
+                                                Image(systemName: "play.circle.fill")
+                                                    .font(.system(size: 24, weight: .medium))
+                                                    .foregroundColor(.white)
+                                                    .shadow(color: .black.opacity(0.5), radius: 2)
+                                                    .padding(8)
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                    }
                 } else {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
@@ -1424,6 +1723,12 @@ struct MasonryImageThumbnailView: View {
         .onHover { hovering in
             isHovered = hovering
         }
+        .onAppear {
+            isInViewport = true
+        }
+        .onDisappear {
+            isInViewport = false
+        }
         .task(id: image.filePath) {
             // Load thumbnail asynchronously and cache
             if Self.thumbnailCache.object(forKey: image.filePath.path as NSString) == nil {
@@ -1439,20 +1744,59 @@ struct MasonryImageThumbnailView: View {
     @MainActor
     private func loadThumbnail(url: URL, maxPixel: Int) async {
         #if canImport(AppKit)
-        // Use CGImageSource to create a downsampled thumbnail efficiently
-        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return }
-        let options: [NSString: Any] = [
-            kCGImageSourceShouldCache: false,
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxPixel,
-            kCGImageSourceCreateThumbnailWithTransform: true
-        ]
-        if let cgThumb = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary) {
-            let nsImage = NSImage(cgImage: cgThumb, size: .zero)
-            Self.thumbnailCache.setObject(nsImage, forKey: url.path as NSString)
-            thumbnailImage = nsImage
+        let fileExtension = url.pathExtension.lowercased()
+        
+        if fileExtension == "gif" {
+            // For GIFs, load the full animated image
+            if let animatedImage = NSImage(contentsOf: url) {
+                Self.thumbnailCache.setObject(animatedImage, forKey: url.path as NSString)
+                thumbnailImage = animatedImage
+            }
+        } else if ["mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"].contains(fileExtension) {
+            // For videos, generate a thumbnail using AVFoundation
+            await generateVideoThumbnail(url: url, maxPixel: maxPixel)
+        } else {
+            // For static images, use CGImageSource to create a downsampled thumbnail efficiently
+            guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return }
+            let options: [NSString: Any] = [
+                kCGImageSourceShouldCache: false,
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceThumbnailMaxPixelSize: maxPixel,
+                kCGImageSourceCreateThumbnailWithTransform: true
+            ]
+            if let cgThumb = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary) {
+                let nsImage = NSImage(cgImage: cgThumb, size: .zero)
+                Self.thumbnailCache.setObject(nsImage, forKey: url.path as NSString)
+                thumbnailImage = nsImage
+            }
         }
         #endif
+    }
+    
+    @MainActor
+    private func generateVideoThumbnail(url: URL, maxPixel: Int) async {
+        let asset = AVAsset(url: url)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+        imageGenerator.maximumSize = CGSize(width: maxPixel, height: maxPixel)
+        
+        // Generate thumbnail at 1 second or start of video
+        let time = CMTime(seconds: 1.0, preferredTimescale: 600)
+        
+        do {
+            let cgImage = try await imageGenerator.image(at: time).image
+            let nsImage = NSImage(cgImage: cgImage, size: .zero)
+            Self.thumbnailCache.setObject(nsImage, forKey: url.path as NSString)
+            thumbnailImage = nsImage
+            print("✅ Generated video thumbnail for: \(url.lastPathComponent)")
+        } catch {
+            print("❌ Failed to generate video thumbnail: \(error)")
+            // Fallback to a generic video icon
+            if let videoIcon = NSImage(systemSymbolName: "video.fill", accessibilityDescription: "Video") {
+                Self.thumbnailCache.setObject(videoIcon, forKey: url.path as NSString)
+                thumbnailImage = videoIcon
+            }
+        }
     }
 }
 
@@ -1474,6 +1818,7 @@ struct VaultsSidebar: View {
     let onVaultDelete: (Vault) -> Void
     let onVaultDownloadAll: (Vault) -> Void
     let onResetConfirmations: () -> Void
+    let onResetDownloadLocation: () -> Void
     let formatDate: (Date) -> String
     
     var textColor: Color {
@@ -1564,9 +1909,12 @@ struct VaultsSidebar: View {
                             onDownloadAll: { vault in
                                 onVaultDownloadAll(vault)
                             },
-                            onResetConfirmations: {
-                                onResetConfirmations()
-                            }
+                        onResetConfirmations: {
+                            onResetConfirmations()
+                        },
+                        onResetDownloadLocation: {
+                            onResetDownloadLocation()
+                        }
                         )
                         .onHover { hovering in
                             withAnimation(.easeInOut(duration: 0.2)) {
@@ -1605,6 +1953,7 @@ struct VaultsSidebar: View {
             let onDelete: (Vault) -> Void
             let onDownloadAll: (Vault) -> Void
             let onResetConfirmations: () -> Void
+            let onResetDownloadLocation: () -> Void
             @State private var tempName: String = ""
             @FocusState private var isTextFieldFocused: Bool
     
@@ -1679,6 +2028,9 @@ struct VaultsSidebar: View {
             Divider()
             Button("Reset Confirmations") {
                 onResetConfirmations()
+            }
+            Button("Reset Download Location") {
+                onResetDownloadLocation()
             }
         }
         .onAppear {
