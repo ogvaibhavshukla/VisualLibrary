@@ -79,6 +79,11 @@ fi
 
 cp -R "$APP_OUT" "$DIST_DIR/"
 
+# Copy README into dist for bundling (from repo root if available)
+if [[ -f "$ROOT_DIR/README-FIRST.md" ]]; then
+  cp "$ROOT_DIR/README-FIRST.md" "$DIST_DIR/README-FIRST.md"
+fi
+
 # Create DMG
 echo "==> Creating professional DMG..."
 DMG_NAME="$SCHEME-v1.0.0"
@@ -92,6 +97,11 @@ mkdir -p "$DMG_TEMP_DIR"
 # Copy app to temp directory
 cp -R "$APP_OUT" "$DMG_TEMP_DIR/"
 
+# Include README in DMG root if available
+if [[ -f "$DIST_DIR/README-FIRST.md" ]]; then
+  cp "$DIST_DIR/README-FIRST.md" "$DMG_TEMP_DIR/README-FIRST.md"
+fi
+
 # Create Applications symlink
 ln -s /Applications "$DMG_TEMP_DIR/Applications"
 
@@ -101,8 +111,14 @@ hdiutil create -srcfolder "$DMG_TEMP_DIR" -volname "VisualInspiration" -fs HFS+ 
 # Clean up temp directory
 rm -rf "$DMG_TEMP_DIR"
 
-# Also create ZIP for convenience
-(cd "$DIST_DIR" && zip -qry "$SCHEME.zip" "$SCHEME.app")
+# Also create ZIP for convenience (include README if present)
+(cd "$DIST_DIR" && {
+  if [[ -f "README-FIRST.md" ]]; then
+    zip -qry "$SCHEME.zip" "$SCHEME.app" "README-FIRST.md"
+  else
+    zip -qry "$SCHEME.zip" "$SCHEME.app"
+  fi
+})
 
 echo "==> Local build complete"
 echo "==> App: $DIST_DIR/$SCHEME.app"
