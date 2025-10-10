@@ -28,3 +28,4 @@ Uninstall
 Drag `VisualInspiration.app` to the Trash. There is no system-wide installer.
 
 
+
