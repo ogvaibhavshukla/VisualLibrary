@@ -7,7 +7,7 @@
         "key": "Drag images here",
         "location": {
           "startingColumn": 38,
-          "startingLine": 152
+          "startingLine": 221
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "%lld images",
         "location": {
           "startingColumn": 34,
-          "startingLine": 169
+          "startingLine": 238
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "•",
         "location": {
           "startingColumn": 34,
-          "startingLine": 203
+          "startingLine": 259
         }
       },
       {
@@ -31,7 +31,15 @@
         "key": "•",
         "location": {
           "startingColumn": 34,
-          "startingLine": 230
+          "startingLine": 282
+        }
+      },
+      {
+        "comment": "",
+        "key": "•",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 309
         }
       },
       {
@@ -39,7 +47,7 @@
         "key": "Minimize",
         "location": {
           "startingColumn": 51,
-          "startingLine": 184
+          "startingLine": 263
         }
       },
       {
@@ -47,7 +55,7 @@
         "key": "Fullscreen",
         "location": {
           "startingColumn": 64,
-          "startingLine": 184
+          "startingLine": 263
         }
       },
       {
@@ -55,7 +63,7 @@
         "key": "Copied!",
         "location": {
           "startingColumn": 26,
-          "startingLine": 452
+          "startingLine": 1242
         }
       },
       {
@@ -63,7 +71,111 @@
         "key": "Copy Image",
         "location": {
           "startingColumn": 40,
-          "startingLine": 652
+          "startingLine": 1349
+        }
+      },
+      {
+        "comment": "",
+        "key": "Download",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 1354
+        }
+      },
+      {
+        "comment": "",
+        "key": "Download",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 1590
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copy Image",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 1607
+        }
+      },
+      {
+        "comment": "",
+        "key": "Download",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 1610
+        }
+      },
+      {
+        "comment": "",
+        "key": "Vaults",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 1958
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 2083
+        }
+      },
+      {
+        "comment": "",
+        "key": "Vault name",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 2085
+        }
+      },
+      {
+        "comment": "",
+        "key": "Rename",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 2133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Empty",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 2136
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete Vault",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 2139
+        }
+      },
+      {
+        "comment": "",
+        "key": "Download All",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 2142
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reset Confirmations",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 2146
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reset Download Location",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 2149
         }
       }
     ]
