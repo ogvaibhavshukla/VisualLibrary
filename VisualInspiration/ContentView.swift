@@ -1154,16 +1154,19 @@ struct ContentView: View {
     private func saveImage(from url: URL) {
         guard let currentVaultId = currentVaultId else { return }
         
-        let filename = url.lastPathComponent
+        // Compress if needed (automatic, silent)
+        let processedURL = compressIfNeeded(url)
+        
+        let filename = processedURL.lastPathComponent
         let vaultDirectory = vaultsDirectory.appendingPathComponent(currentVaultId.uuidString)
         let destinationURL = vaultDirectory.appendingPathComponent(filename)
         
-        print("💾 Saving image from: \(url)")
+        print("💾 Saving image from: \(processedURL)")
         print("💾 Destination: \(destinationURL)")
         
         do {
             // Copy file to current vault directory
-            try fileManager.copyItem(at: url, to: destinationURL)
+            try fileManager.copyItem(at: processedURL, to: destinationURL)
             
             // Add to images array
             let newImage = ImageAsset(filePath: destinationURL, vaultId: currentVaultId)
@@ -1225,6 +1228,96 @@ struct ContentView: View {
         } catch {
             print("❌ Failed to delete image: \(error)")
         }
+    }
+    
+    // MARK: - Image Compression (Phase 4)
+    
+    /// Checks if image needs compression and compresses if necessary
+    /// - Parameter url: Original image URL
+    /// - Returns: Compressed URL if compression happened, otherwise original URL
+    private func compressIfNeeded(_ url: URL) -> URL {
+        let fileSize = getFileSize(url)
+        
+        // Only compress large images (>10MB)
+        guard fileSize > 10_000_000 else {
+            return url
+        }
+        
+        // Attempt compression
+        if let compressedURL = compressImage(url, quality: 0.85) {
+            let compressedSize = getFileSize(compressedURL)
+            let savedBytes = fileSize - compressedSize
+            let savingsPercent = Int((Double(savedBytes) / Double(fileSize)) * 100)
+            print("✅ Compressed: \(formatBytes(fileSize)) → \(formatBytes(compressedSize)) (saved \(savingsPercent)%)")
+            return compressedURL
+        }
+        
+        // Fallback to original if compression fails
+        return url
+    }
+    
+    /// Compresses an image to JPEG format
+    /// - Parameters:
+    ///   - url: Original image URL
+    ///   - quality: JPEG quality (0.0 to 1.0), where 0.85 is industry standard
+    /// - Returns: URL to compressed image, or nil if compression failed
+    private func compressImage(_ url: URL, quality: Double) -> URL? {
+        // Load original image
+        guard let image = NSImage(contentsOf: url) else {
+            print("❌ Failed to load image for compression")
+            return nil
+        }
+        
+        // Get bitmap representation
+        guard let bitmap = image.representations.first as? NSBitmapImageRep else {
+            print("❌ Failed to get bitmap representation")
+            return nil
+        }
+        
+        // Compress to JPEG
+        guard let compressedData = bitmap.representation(using: .jpeg, properties: [
+            .compressionFactor: quality
+        ]) else {
+            print("❌ Failed to compress image")
+            return nil
+        }
+        
+        // Create temporary file for compressed image
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let compressedURL = tempDirectory.appendingPathComponent(url.lastPathComponent)
+            .deletingPathExtension()
+            .appendingPathExtension("jpg")
+        
+        // Write compressed data
+        do {
+            try compressedData.write(to: compressedURL)
+            return compressedURL
+        } catch {
+            print("❌ Failed to write compressed image: \(error)")
+            return nil
+        }
+    }
+    
+    /// Gets file size in bytes
+    /// - Parameter url: File URL
+    /// - Returns: File size in bytes
+    private func getFileSize(_ url: URL) -> Int64 {
+        do {
+            let attributes = try fileManager.attributesOfItem(atPath: url.path)
+            return attributes[.size] as? Int64 ?? 0
+        } catch {
+            return 0
+        }
+    }
+    
+    /// Formats bytes into human-readable string
+    /// - Parameter bytes: Number of bytes
+    /// - Returns: Formatted string (e.g., "25.3 MB")
+    private func formatBytes(_ bytes: Int64) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: bytes)
     }
 }
 
