@@ -1232,38 +1232,49 @@ struct ContentView: View {
     
     // MARK: - Image Compression (Phase 4)
     
-    /// Checks if image needs compression and compresses if necessary
-    /// - Parameter url: Original image URL
+    /// Checks if image/video needs compression and compresses if necessary
+    /// - Parameter url: Original file URL
     /// - Returns: Compressed URL if compression happened, otherwise original URL
     private func compressIfNeeded(_ url: URL) -> URL {
         let fileSize = getFileSize(url)
         let fileExtension = url.pathExtension.lowercased()
         
-        // Skip compression for files that shouldn't be compressed
+        // File format categories
         let videoFormats = ["mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
         let preserveFormats = ["gif"] // GIFs lose animation when compressed
         
-        if videoFormats.contains(fileExtension) {
-            print("⏭️ Skipping compression for video: \(url.lastPathComponent)")
-            return url
-        }
-        
+        // Skip GIFs (preserve animation)
         if preserveFormats.contains(fileExtension) {
             print("⏭️ Skipping compression for GIF (preserving animation): \(url.lastPathComponent)")
             return url
         }
         
-        // Only compress large images (>10MB)
+        // Only compress large files (>10MB)
         guard fileSize > 10_000_000 else {
             return url
         }
         
-        // Attempt compression for static images
+        // Handle video compression
+        if videoFormats.contains(fileExtension) {
+            print("🎬 Starting video compression: \(url.lastPathComponent)")
+            if let compressedURL = compressVideo(url) {
+                let compressedSize = getFileSize(compressedURL)
+                let savedBytes = fileSize - compressedSize
+                let savingsPercent = Int((Double(savedBytes) / Double(fileSize)) * 100)
+                print("✅ Compressed video: \(formatBytes(fileSize)) → \(formatBytes(compressedSize)) (saved \(savingsPercent)%)")
+                return compressedURL
+            } else {
+                print("⚠️ Video compression failed, using original")
+                return url
+            }
+        }
+        
+        // Handle image compression
         if let compressedURL = compressImage(url, quality: 0.85) {
             let compressedSize = getFileSize(compressedURL)
             let savedBytes = fileSize - compressedSize
             let savingsPercent = Int((Double(savedBytes) / Double(fileSize)) * 100)
-            print("✅ Compressed: \(formatBytes(fileSize)) → \(formatBytes(compressedSize)) (saved \(savingsPercent)%)")
+            print("✅ Compressed image: \(formatBytes(fileSize)) → \(formatBytes(compressedSize)) (saved \(savingsPercent)%)")
             return compressedURL
         }
         
@@ -1311,6 +1322,66 @@ struct ContentView: View {
             print("❌ Failed to write compressed image: \(error)")
             return nil
         }
+    }
+    
+    /// Compresses a video using AVFoundation
+    /// - Parameter url: Original video URL
+    /// - Returns: URL to compressed video, or nil if compression failed
+    private func compressVideo(_ url: URL) -> URL? {
+        let semaphore = DispatchSemaphore(value: 0)
+        var resultURL: URL? = nil
+        
+        // Create AVAsset from video file
+        let asset = AVAsset(url: url)
+        
+        // Use medium quality preset for good balance (typically 70-80% reduction)
+        guard let exportSession = AVAssetExportSession(
+            asset: asset,
+            presetName: AVAssetExportPresetMediumQuality
+        ) else {
+            print("❌ Failed to create export session")
+            return nil
+        }
+        
+        // Create output URL in temp directory
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let outputURL = tempDirectory.appendingPathComponent(url.lastPathComponent)
+            .deletingPathExtension()
+            .appendingPathExtension("mp4")
+        
+        // Remove existing file if present
+        try? FileManager.default.removeItem(at: outputURL)
+        
+        // Configure export session
+        exportSession.outputURL = outputURL
+        exportSession.outputFileType = .mp4
+        exportSession.shouldOptimizeForNetworkUse = true
+        
+        // Start export
+        exportSession.exportAsynchronously {
+            switch exportSession.status {
+            case .completed:
+                resultURL = outputURL
+                print("✅ Video export completed")
+            case .failed:
+                print("❌ Video export failed: \(String(describing: exportSession.error))")
+            case .cancelled:
+                print("⚠️ Video export cancelled")
+            default:
+                break
+            }
+            semaphore.signal()
+        }
+        
+        // Wait for compression to complete (with timeout)
+        let timeout = DispatchTime.now() + .seconds(60)
+        if semaphore.wait(timeout: timeout) == .timedOut {
+            print("❌ Video compression timed out")
+            exportSession.cancelExport()
+            return nil
+        }
+        
+        return resultURL
     }
     
     /// Gets file size in bytes
