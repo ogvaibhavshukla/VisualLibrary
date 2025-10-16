@@ -1334,10 +1334,10 @@ struct ContentView: View {
         // Create AVAsset from video file
         let asset = AVAsset(url: url)
         
-        // Use medium quality preset for good balance (typically 70-80% reduction)
+        // Use 720p preset for good balance (typically 50-60% reduction, excellent quality)
         guard let exportSession = AVAssetExportSession(
             asset: asset,
-            presetName: AVAssetExportPresetMediumQuality
+            presetName: AVAssetExportPreset1280x720
         ) else {
             print("❌ Failed to create export session")
             return nil
