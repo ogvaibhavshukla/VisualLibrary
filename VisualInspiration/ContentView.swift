@@ -1237,13 +1237,28 @@ struct ContentView: View {
     /// - Returns: Compressed URL if compression happened, otherwise original URL
     private func compressIfNeeded(_ url: URL) -> URL {
         let fileSize = getFileSize(url)
+        let fileExtension = url.pathExtension.lowercased()
+        
+        // Skip compression for files that shouldn't be compressed
+        let videoFormats = ["mp4", "mov", "avi", "mkv", "webm", "m4v", "3gp"]
+        let preserveFormats = ["gif"] // GIFs lose animation when compressed
+        
+        if videoFormats.contains(fileExtension) {
+            print("⏭️ Skipping compression for video: \(url.lastPathComponent)")
+            return url
+        }
+        
+        if preserveFormats.contains(fileExtension) {
+            print("⏭️ Skipping compression for GIF (preserving animation): \(url.lastPathComponent)")
+            return url
+        }
         
         // Only compress large images (>10MB)
         guard fileSize > 10_000_000 else {
             return url
         }
         
-        // Attempt compression
+        // Attempt compression for static images
         if let compressedURL = compressImage(url, quality: 0.85) {
             let compressedSize = getFileSize(compressedURL)
             let savedBytes = fileSize - compressedSize
