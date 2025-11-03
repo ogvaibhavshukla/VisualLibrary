@@ -1,0 +1,465 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2857D4702D5F8A8000EE1012 /* VisualInspirationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2857D46F2D5F8A8000EE1012 /* VisualInspirationApp.swift */; };
+		2857D4722D5F8A8000EE1012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2857D4712D5F8A8000EE1012 /* ContentView.swift */; };
+		2857D4742D5F8A8000EE1012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4732D5F8A8000EE1012 /* Assets.xcassets */; };
+		2857D4772D5F8A8000EE1012 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */; };
+		2857D47A2D5F8A8000EE1012 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */; };
+		80611D032EB8A99200EBD4C0 /* MoodBoardCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CF32EB8A99200EBD4C0 /* MoodBoardCanvasView.swift */; };
+		80611D052EB8A99200EBD4C0 /* ZoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CED2EB8A99200EBD4C0 /* ZoomController.swift */; };
+		80611D062EB8A99200EBD4C0 /* CanvasState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CE42EB8A99200EBD4C0 /* CanvasState.swift */; };
+		80611D072EB8A99200EBD4C0 /* SelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CEC2EB8A99200EBD4C0 /* SelectionManager.swift */; };
+		80611D082EB8A99200EBD4C0 /* MoodBoardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CE52EB8A99200EBD4C0 /* MoodBoardItem.swift */; };
+		80611D092EB8A99200EBD4C0 /* ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CE92EB8A99200EBD4C0 /* ExportManager.swift */; };
+		80611D0A2EB8A99200EBD4C0 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CEB2EB8A99200EBD4C0 /* ImageLoader.swift */; };
+		80611D0B2EB8A99200EBD4C0 /* TransformHandles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CF42EB8A99200EBD4C0 /* TransformHandles.swift */; };
+		80611D0C2EB8A99200EBD4C0 /* GeometryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CEF2EB8A99200EBD4C0 /* GeometryExtensions.swift */; };
+		80611D0D2EB8A99200EBD4C0 /* CanvasInteractionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CE82EB8A99200EBD4C0 /* CanvasInteractionHandler.swift */; };
+		80611D0E2EB8A99200EBD4C0 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CEA2EB8A99200EBD4C0 /* ImageCache.swift */; };
+		80611D102EB8A99200EBD4C0 /* CanvasViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80611CF12EB8A99200EBD4C0 /* CanvasViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2857D46C2D5F8A8000EE1012 /* VisualInspiration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualInspiration.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2857D46F2D5F8A8000EE1012 /* VisualInspirationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualInspirationApp.swift; sourceTree = "<group>"; };
+		2857D4712D5F8A8000EE1012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2857D4732D5F8A8000EE1012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
+		2857D47B2D5F8A8000EE1012 /* VisualInspiration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VisualInspiration.entitlements; sourceTree = "<group>"; };
+		80611CE42EB8A99200EBD4C0 /* CanvasState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasState.swift; sourceTree = "<group>"; };
+		80611CE52EB8A99200EBD4C0 /* MoodBoardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBoardItem.swift; sourceTree = "<group>"; };
+		80611CE82EB8A99200EBD4C0 /* CanvasInteractionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasInteractionHandler.swift; sourceTree = "<group>"; };
+		80611CE92EB8A99200EBD4C0 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
+		80611CEA2EB8A99200EBD4C0 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		80611CEB2EB8A99200EBD4C0 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		80611CEC2EB8A99200EBD4C0 /* SelectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionManager.swift; sourceTree = "<group>"; };
+		80611CED2EB8A99200EBD4C0 /* ZoomController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomController.swift; sourceTree = "<group>"; };
+		80611CEF2EB8A99200EBD4C0 /* GeometryExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryExtensions.swift; sourceTree = "<group>"; };
+		80611CF12EB8A99200EBD4C0 /* CanvasViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasViewModel.swift; sourceTree = "<group>"; };
+		80611CF32EB8A99200EBD4C0 /* MoodBoardCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBoardCanvasView.swift; sourceTree = "<group>"; };
+		80611CF42EB8A99200EBD4C0 /* TransformHandles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformHandles.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2857D4692D5F8A8000EE1012 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2857D4632D5F8A8000EE1012 = {
+			isa = PBXGroup;
+			children = (
+				80611D002EB8A99200EBD4C0 /* MoodBoard */,
+				2857D46E2D5F8A8000EE1012 /* VisualInspiration */,
+				2857D46D2D5F8A8000EE1012 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2857D46D2D5F8A8000EE1012 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2857D46C2D5F8A8000EE1012 /* VisualInspiration.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2857D46E2D5F8A8000EE1012 /* VisualInspiration */ = {
+			isa = PBXGroup;
+			children = (
+				2857D46F2D5F8A8000EE1012 /* VisualInspirationApp.swift */,
+				2857D4712D5F8A8000EE1012 /* ContentView.swift */,
+				2857D4732D5F8A8000EE1012 /* Assets.xcassets */,
+				2857D47B2D5F8A8000EE1012 /* VisualInspiration.entitlements */,
+				2857D4752D5F8A8000EE1012 /* Preview Content */,
+				2857D4782D5F8A8000EE1012 /* fonts */,
+			);
+			path = VisualInspiration;
+			sourceTree = "<group>";
+		};
+		2857D4752D5F8A8000EE1012 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		2857D4782D5F8A8000EE1012 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */,
+			);
+			path = fonts;
+			sourceTree = "<group>";
+		};
+		80611CE62EB8A99200EBD4C0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				80611CE42EB8A99200EBD4C0 /* CanvasState.swift */,
+				80611CE52EB8A99200EBD4C0 /* MoodBoardItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		80611CE72EB8A99200EBD4C0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		80611CEE2EB8A99200EBD4C0 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				80611CE82EB8A99200EBD4C0 /* CanvasInteractionHandler.swift */,
+				80611CE92EB8A99200EBD4C0 /* ExportManager.swift */,
+				80611CEA2EB8A99200EBD4C0 /* ImageCache.swift */,
+				80611CEB2EB8A99200EBD4C0 /* ImageLoader.swift */,
+				80611CEC2EB8A99200EBD4C0 /* SelectionManager.swift */,
+				80611CED2EB8A99200EBD4C0 /* ZoomController.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		80611CF02EB8A99200EBD4C0 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				80611CEF2EB8A99200EBD4C0 /* GeometryExtensions.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		80611CF22EB8A99200EBD4C0 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				80611CF12EB8A99200EBD4C0 /* CanvasViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		80611CF52EB8A99200EBD4C0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				80611CF32EB8A99200EBD4C0 /* MoodBoardCanvasView.swift */,
+				80611CF42EB8A99200EBD4C0 /* TransformHandles.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		80611CFA2EB8A99200EBD4C0 /* MoodBoard */ = {
+			isa = PBXGroup;
+			children = (
+				80611CE62EB8A99200EBD4C0 /* Models */,
+				80611CE72EB8A99200EBD4C0 /* Resources */,
+				80611CEE2EB8A99200EBD4C0 /* Services */,
+				80611CF02EB8A99200EBD4C0 /* Utilities */,
+				80611CF22EB8A99200EBD4C0 /* ViewModels */,
+				80611CF52EB8A99200EBD4C0 /* Views */,
+			);
+			path = MoodBoard;
+			sourceTree = "<group>";
+		};
+		80611D002EB8A99200EBD4C0 /* MoodBoard */ = {
+			isa = PBXGroup;
+			children = (
+				80611CFA2EB8A99200EBD4C0 /* MoodBoard */,
+			);
+			path = MoodBoard;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2857D46B2D5F8A8000EE1012 /* VisualInspiration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2857D47E2D5F8A8000EE1012 /* Build configuration list for PBXNativeTarget "VisualInspiration" */;
+			buildPhases = (
+				2857D4682D5F8A8000EE1012 /* Sources */,
+				2857D4692D5F8A8000EE1012 /* Frameworks */,
+				2857D46A2D5F8A8000EE1012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VisualInspiration;
+			productName = VisualInspiration;
+			productReference = 2857D46C2D5F8A8000EE1012 /* VisualInspiration.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2857D4642D5F8A8000EE1012 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					2857D46B2D5F8A8000EE1012 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+				};
+			};
+			buildConfigurationList = 2857D4672D5F8A8000EE1012 /* Build configuration list for PBXProject "VisualInspiration" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2857D4632D5F8A8000EE1012;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2857D46D2D5F8A8000EE1012 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2857D46B2D5F8A8000EE1012 /* VisualInspiration */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2857D46A2D5F8A8000EE1012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2857D4772D5F8A8000EE1012 /* Preview Assets.xcassets in Resources */,
+				2857D47A2D5F8A8000EE1012 /* Lato-Regular.ttf in Resources */,
+				2857D4742D5F8A8000EE1012 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2857D4682D5F8A8000EE1012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2857D4722D5F8A8000EE1012 /* ContentView.swift in Sources */,
+				80611D032EB8A99200EBD4C0 /* MoodBoardCanvasView.swift in Sources */,
+				80611D052EB8A99200EBD4C0 /* ZoomController.swift in Sources */,
+				80611D062EB8A99200EBD4C0 /* CanvasState.swift in Sources */,
+				80611D072EB8A99200EBD4C0 /* SelectionManager.swift in Sources */,
+				80611D082EB8A99200EBD4C0 /* MoodBoardItem.swift in Sources */,
+				80611D092EB8A99200EBD4C0 /* ExportManager.swift in Sources */,
+				80611D0A2EB8A99200EBD4C0 /* ImageLoader.swift in Sources */,
+				80611D0B2EB8A99200EBD4C0 /* TransformHandles.swift in Sources */,
+				80611D0C2EB8A99200EBD4C0 /* GeometryExtensions.swift in Sources */,
+				80611D0D2EB8A99200EBD4C0 /* CanvasInteractionHandler.swift in Sources */,
+				80611D0E2EB8A99200EBD4C0 /* ImageCache.swift in Sources */,
+				80611D102EB8A99200EBD4C0 /* CanvasViewModel.swift in Sources */,
+				2857D4702D5F8A8000EE1012 /* VisualInspirationApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2857D47C2D5F8A8000EE1012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2857D47D2D5F8A8000EE1012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		2857D47F2D5F8A8000EE1012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = VisualInspiration/VisualInspiration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "\"VisualInspiration/Preview Content\"";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.visuallibrary.visualinspiration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2857D4802D5F8A8000EE1012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = VisualInspiration/VisualInspiration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_ASSET_PATHS = "\"VisualInspiration/Preview Content\"";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.visuallibrary.visualinspiration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2857D4672D5F8A8000EE1012 /* Build configuration list for PBXProject "VisualInspiration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2857D47C2D5F8A8000EE1012 /* Debug */,
+				2857D47D2D5F8A8000EE1012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2857D47E2D5F8A8000EE1012 /* Build configuration list for PBXNativeTarget "VisualInspiration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2857D47F2D5F8A8000EE1012 /* Debug */,
+				2857D4802D5F8A8000EE1012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2857D4642D5F8A8000EE1012 /* Project object */;
+}
