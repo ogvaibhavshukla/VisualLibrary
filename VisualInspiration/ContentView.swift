@@ -454,6 +454,7 @@ struct ContentView: View {
         }
         .frame(minWidth: 1100, minHeight: 600)
         .animation(.easeInOut(duration: 0.2), value: showingSidebar)
+        .ignoresSafeArea(.all, edges: .top)
         .preferredColorScheme(colorScheme)
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.willEnterFullScreenNotification)) { _ in
             isFullscreen = true

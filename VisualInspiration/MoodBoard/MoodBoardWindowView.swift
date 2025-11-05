@@ -53,14 +53,23 @@ struct MoodBoardWindowView: View {
                     .buttonStyle(.bordered)
             }
             .padding()
-            .background(Color.moodBoardToolbar)
-
-            Divider()
-                .background(Color.white.opacity(0.1))
+            .background(Color.clear)
 
             // Canvas
             MoodBoardCanvasRepresentable(viewModel: viewModel)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .ignoresSafeArea(.all, edges: .top)
+        .onAppear {
+            // Additional window configuration to ensure traffic light buttons are hidden
+            // This works as a direct fallback in case AppDelegate configuration doesn't trigger
+            DispatchQueue.main.async {
+                if let window = NSApplication.shared.windows.first(where: { $0.isKeyWindow && $0 != NSApplication.shared.windows.first }) {
+                    window.standardWindowButton(.closeButton)?.isHidden = true
+                    window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+                    window.standardWindowButton(.zoomButton)?.isHidden = true
+                }
+            }
         }
         .sheet(isPresented: $showClearConfirmation) {
             ClearConfirmationView(

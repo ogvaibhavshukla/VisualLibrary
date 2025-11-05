@@ -35,7 +35,9 @@ struct VisualInspirationApp: App {
             MoodBoardWindowView()
                 .preferredColorScheme(colorSchemeString == "dark" ? .dark : .light)
         }
+        .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1200, height: 800)
+        .windowToolbarStyle(.unifiedCompact)
     }
 }
 
@@ -80,8 +82,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let window = notification.object as? NSWindow else { return }
 
         // Configure MoodBoard window when it appears
-        if window.title == "MoodBoard" || window.identifier?.rawValue == "moodboard" {
-            configureMoodBoardWindow(window)
+        // Check if this is not the main window (first window)
+        // MoodBoard windows are secondary windows created after the main window
+        if window != NSApplication.shared.windows.first,
+           window.styleMask.contains(.titled) {
+            // Additional check: ensure it hasn't been configured already
+            // by checking if closeButton is already hidden
+            if window.standardWindowButton(.closeButton)?.isHidden != true {
+                configureMoodBoardWindow(window)
+            }
         }
     }
 
