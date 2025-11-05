@@ -12,6 +12,23 @@
 		2857D4742D5F8A8000EE1012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4732D5F8A8000EE1012 /* Assets.xcassets */; };
 		2857D4772D5F8A8000EE1012 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */; };
 		2857D47A2D5F8A8000EE1012 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */; };
+		MB000012D5F8A8000EE1012 /* MoodBoardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000011D5F8A8000EE1012 /* MoodBoardItem.swift */; };
+		MB000022D5F8A8000EE1012 /* CanvasState.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000021D5F8A8000EE1012 /* CanvasState.swift */; };
+		MB000032D5F8A8000EE1012 /* MoodBoardCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000031D5F8A8000EE1012 /* MoodBoardCanvasView.swift */; };
+		MB000042D5F8A8000EE1012 /* TransformHandles.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000041D5F8A8000EE1012 /* TransformHandles.swift */; };
+		MB000052D5F8A8000EE1012 /* CanvasViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000051D5F8A8000EE1012 /* CanvasViewModel.swift */; };
+		MB000062D5F8A8000EE1012 /* GeometryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000061D5F8A8000EE1012 /* GeometryExtensions.swift */; };
+		MB000072D5F8A8000EE1012 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000071D5F8A8000EE1012 /* ImageCache.swift */; };
+		MB000082D5F8A8000EE1012 /* ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000081D5F8A8000EE1012 /* ExportManager.swift */; };
+		MB000092D5F8A8000EE1012 /* CanvasInteractionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB000091D5F8A8000EE1012 /* CanvasInteractionHandler.swift */; };
+		MB0000A2D5F8A8000EE1012 /* SelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0000A1D5F8A8000EE1012 /* SelectionManager.swift */; };
+		MB0000B2D5F8A8000EE1012 /* ZoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0000B1D5F8A8000EE1012 /* ZoomController.swift */; };
+		MB0000C2D5F8A8000EE1012 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0000C1D5F8A8000EE1012 /* ImageLoader.swift */; };
+		MB0000D2D5F8A8000EE1012 /* MoodBoardCanvasRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0000D1D5F8A8000EE1012 /* MoodBoardCanvasRepresentable.swift */; };
+		MB0000E2D5F8A8000EE1012 /* MoodBoardWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0000E1D5F8A8000EE1012 /* MoodBoardWindowView.swift */; };
+		MB0000F2D5F8A8000EE1012 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0000F1D5F8A8000EE1012 /* PersistenceManager.swift */; };
+		MB0001012D5F8A8000EE1013 /* ClearConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0001002D5F8A8000EE1013 /* ClearConfirmationView.swift */; };
+		MB0001122D5F8A8000EE1013 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = MB0001112D5F8A8000EE1013 /* Colors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +39,23 @@
 		2857D4762D5F8A8000EE1012 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
 		2857D47B2D5F8A8000EE1012 /* VisualInspiration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VisualInspiration.entitlements; sourceTree = "<group>"; };
+		MB000011D5F8A8000EE1012 /* MoodBoardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBoardItem.swift; sourceTree = "<group>"; };
+		MB000021D5F8A8000EE1012 /* CanvasState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasState.swift; sourceTree = "<group>"; };
+		MB000031D5F8A8000EE1012 /* MoodBoardCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBoardCanvasView.swift; sourceTree = "<group>"; };
+		MB000041D5F8A8000EE1012 /* TransformHandles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformHandles.swift; sourceTree = "<group>"; };
+		MB000051D5F8A8000EE1012 /* CanvasViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasViewModel.swift; sourceTree = "<group>"; };
+		MB000061D5F8A8000EE1012 /* GeometryExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryExtensions.swift; sourceTree = "<group>"; };
+		MB000071D5F8A8000EE1012 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		MB000081D5F8A8000EE1012 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
+		MB000091D5F8A8000EE1012 /* CanvasInteractionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasInteractionHandler.swift; sourceTree = "<group>"; };
+		MB0000A1D5F8A8000EE1012 /* SelectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionManager.swift; sourceTree = "<group>"; };
+		MB0000B1D5F8A8000EE1012 /* ZoomController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomController.swift; sourceTree = "<group>"; };
+		MB0000C1D5F8A8000EE1012 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		MB0000D1D5F8A8000EE1012 /* MoodBoardCanvasRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBoardCanvasRepresentable.swift; sourceTree = "<group>"; };
+		MB0000E1D5F8A8000EE1012 /* MoodBoardWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBoardWindowView.swift; sourceTree = "<group>"; };
+		MB0000F1D5F8A8000EE1012 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		MB0001002D5F8A8000EE1013 /* ClearConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearConfirmationView.swift; sourceTree = "<group>"; };
+		MB0001112D5F8A8000EE1013 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +94,7 @@
 				2857D47B2D5F8A8000EE1012 /* VisualInspiration.entitlements */,
 				2857D4752D5F8A8000EE1012 /* Preview Content */,
 				2857D4782D5F8A8000EE1012 /* fonts */,
+				MB0001002D5F8A8000EE1012 /* MoodBoard */,
 			);
 			path = VisualInspiration;
 			sourceTree = "<group>";
@@ -78,6 +113,70 @@
 				2857D4792D5F8A8000EE1012 /* Lato-Regular.ttf */,
 			);
 			path = fonts;
+			sourceTree = "<group>";
+		};
+		MB0001002D5F8A8000EE1012 /* MoodBoard */ = {
+			isa = PBXGroup;
+			children = (
+				MB0001012D5F8A8000EE1012 /* Models */,
+				MB0001022D5F8A8000EE1012 /* Views */,
+				MB0001032D5F8A8000EE1012 /* ViewModels */,
+				MB0001042D5F8A8000EE1012 /* Services */,
+				MB0001052D5F8A8000EE1012 /* Utilities */,
+				MB0000D1D5F8A8000EE1012 /* MoodBoardCanvasRepresentable.swift */,
+				MB0000E1D5F8A8000EE1012 /* MoodBoardWindowView.swift */,
+			);
+			path = MoodBoard;
+			sourceTree = "<group>";
+		};
+		MB0001012D5F8A8000EE1012 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				MB000011D5F8A8000EE1012 /* MoodBoardItem.swift */,
+				MB000021D5F8A8000EE1012 /* CanvasState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		MB0001022D5F8A8000EE1012 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				MB000031D5F8A8000EE1012 /* MoodBoardCanvasView.swift */,
+				MB000041D5F8A8000EE1012 /* TransformHandles.swift */,
+				MB0001002D5F8A8000EE1013 /* ClearConfirmationView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		MB0001032D5F8A8000EE1012 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				MB000051D5F8A8000EE1012 /* CanvasViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		MB0001042D5F8A8000EE1012 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				MB000071D5F8A8000EE1012 /* ImageCache.swift */,
+				MB000081D5F8A8000EE1012 /* ExportManager.swift */,
+				MB000091D5F8A8000EE1012 /* CanvasInteractionHandler.swift */,
+				MB0000A1D5F8A8000EE1012 /* SelectionManager.swift */,
+				MB0000B1D5F8A8000EE1012 /* ZoomController.swift */,
+				MB0000C1D5F8A8000EE1012 /* ImageLoader.swift */,
+				MB0000F1D5F8A8000EE1012 /* PersistenceManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		MB0001052D5F8A8000EE1012 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				MB000061D5F8A8000EE1012 /* GeometryExtensions.swift */,
+				MB0001112D5F8A8000EE1013 /* Colors.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,6 +253,23 @@
 			files = (
 				2857D4722D5F8A8000EE1012 /* ContentView.swift in Sources */,
 				2857D4702D5F8A8000EE1012 /* VisualInspirationApp.swift in Sources */,
+				MB000012D5F8A8000EE1012 /* MoodBoardItem.swift in Sources */,
+				MB000022D5F8A8000EE1012 /* CanvasState.swift in Sources */,
+				MB000032D5F8A8000EE1012 /* MoodBoardCanvasView.swift in Sources */,
+				MB000042D5F8A8000EE1012 /* TransformHandles.swift in Sources */,
+				MB000052D5F8A8000EE1012 /* CanvasViewModel.swift in Sources */,
+				MB000062D5F8A8000EE1012 /* GeometryExtensions.swift in Sources */,
+				MB000072D5F8A8000EE1012 /* ImageCache.swift in Sources */,
+				MB000082D5F8A8000EE1012 /* ExportManager.swift in Sources */,
+				MB000092D5F8A8000EE1012 /* CanvasInteractionHandler.swift in Sources */,
+				MB0000A2D5F8A8000EE1012 /* SelectionManager.swift in Sources */,
+				MB0000B2D5F8A8000EE1012 /* ZoomController.swift in Sources */,
+				MB0000C2D5F8A8000EE1012 /* ImageLoader.swift in Sources */,
+				MB0000D2D5F8A8000EE1012 /* MoodBoardCanvasRepresentable.swift in Sources */,
+				MB0000E2D5F8A8000EE1012 /* MoodBoardWindowView.swift in Sources */,
+				MB0000F2D5F8A8000EE1012 /* PersistenceManager.swift in Sources */,
+				MB0001012D5F8A8000EE1013 /* ClearConfirmationView.swift in Sources */,
+				MB0001122D5F8A8000EE1013 /* Colors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

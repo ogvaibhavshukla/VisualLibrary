@@ -4,3 +4,9 @@ freewrite-reference/
 
 # Ignore local Cursor workspace settings
 .cursor/
+
+# Ignore planning documents
+MOODBOARD_INTEGRATION_PLAN.md
+
+# Build artifacts
+build/

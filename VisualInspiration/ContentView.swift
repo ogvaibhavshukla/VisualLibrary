@@ -77,8 +77,13 @@ struct ContentView: View {
     @State private var skipDeleteConfirmation = false
     @State private var rememberDownloadLocation = false
     @State private var savedDownloadLocation: URL? = nil
+    @State private var isHoveringMoodBoard = false
+    @State private var showingMoodBoard = false
     static let imageCopiedNotification = Notification.Name("VI.ImageCopied")
-    
+
+    // Environment for opening separate windows
+    @Environment(\.openWindow) private var openWindow
+
     // File manager and directory setup
     private let fileManager = FileManager.default
     
@@ -255,7 +260,31 @@ struct ContentView: View {
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundColor(textColor)
                                 .animation(.easeInOut(duration: 0.6), value: colorScheme)
-                        
+
+                            Text("•")
+                                .foregroundColor(.gray)
+
+                            // MoodBoard button
+                            Button(action: {
+                                openWindow(id: "moodboard")
+                            }) {
+                                Image(systemName: "square.grid.2x2")
+                                    .font(.system(size: 13, weight: .medium))
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundColor(isHoveringMoodBoard ? textHoverColor : textColor)
+                            .animation(.easeInOut(duration: 0.6), value: colorScheme)
+                            .onHover { hovering in
+                                isHoveringMoodBoard = hovering
+                                isHoveringBottomNav = hovering
+                                if hovering {
+                                    NSCursor.pointingHand.push()
+                                } else {
+                                    NSCursor.pop()
+                                }
+                            }
+                            .help("Open MoodBoard")
+
                             Text("•")
                                 .foregroundColor(.gray)
 
