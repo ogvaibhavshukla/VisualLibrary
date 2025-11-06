@@ -59,6 +59,7 @@ struct MoodBoardWindowView: View {
             MoodBoardCanvasRepresentable(viewModel: viewModel)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+
         .ignoresSafeArea(.all, edges: .top)
         .onAppear {
             // Additional window configuration to ensure traffic light buttons are hidden

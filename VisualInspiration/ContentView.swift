@@ -1576,7 +1576,7 @@ struct MasonryGridView: View {
                 LazyVStack(spacing: 14) {
                     ForEach(getImagesForColumn(columnIndex, totalColumns: columnCount)) { image in
                         MasonryImageThumbnailView(
-                            image: image, 
+                            image: image,
                             colorScheme: colorScheme,
                             width: columnWidth,
                             onDelete: { onDeleteRequested(image) }
@@ -1595,13 +1595,13 @@ struct MasonryGridView: View {
                         .contextMenu {
                             let fileExtension = image.filePath.pathExtension.lowercased()
                             let isGIF = fileExtension == "gif"
-                            
+
                             if !isGIF {
                                 Button("Copy Image") {
                                     onCopyImage(image.filePath)
                                 }
                             }
-                            
+
                             Button("Download") {
                                 onDownloadImage(image)
                             }
@@ -1610,6 +1610,7 @@ struct MasonryGridView: View {
                 }
             }
         }
+        .padding(.top, 5)
         .onAppear { onColumnCountChange(columnCount) }
         .onChange(of: availableWidth) { onColumnCountChange(getColumnCount(for: availableWidth)) }
     }
@@ -2298,6 +2299,7 @@ struct FoldersSidebar: View {
             }
             .scrollIndicators(.never)
         }
+        .padding(.top, 5)
         .background(Color(colorScheme == .light ? .white : .black))
     }
     
