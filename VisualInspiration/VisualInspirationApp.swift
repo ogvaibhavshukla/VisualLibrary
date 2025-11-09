@@ -30,8 +30,8 @@ struct VisualInspirationApp: App {
         .windowToolbarStyle(.unifiedCompact)
         .windowResizability(.contentSize)
 
-        // MoodBoard window - opens as a separate independent window
-        WindowGroup(id: "moodboard") {
+        // MoodBoard window - opens as a separate independent window (single instance)
+        Window("MoodBoard", id: "moodboard") {
             MoodBoardWindowView()
                 .preferredColorScheme(colorSchemeString == "dark" ? .dark : .light)
         }
