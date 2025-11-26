@@ -2328,84 +2328,117 @@ struct FoldersSidebar: View {
             @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
-        Button(action: onSelected) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        if isEditing {
-                            TextField("", text: $tempName)
-                                .placeholder(when: tempName.isEmpty) {
-                                    Text("Folder name")
-                                        .foregroundColor(.secondary)
-                                }
-                                .textFieldStyle(.plain)
-                                .font(.system(size: 13))
-                                .foregroundColor(.primary)
-                                .focused($isTextFieldFocused)
-                                .onSubmit {
-                                    editingName = tempName
-                                    onNameSaved()
-                                }
-                                .onAppear {
-                                    tempName = folder.name.isEmpty ? "" : folder.name
-                                    // Auto-focus when editing starts
-                                    DispatchQueue.main.async {
+        ZStack(alignment: .topTrailing) {
+            Button(action: onSelected) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            if isEditing {
+                                TextField("", text: $tempName)
+                                    .placeholder(when: tempName.isEmpty) {
+                                        Text("Folder name")
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.primary)
+                                    .focused($isTextFieldFocused)
+                                    .onSubmit {
+                                        editingName = tempName
+                                        onNameSaved()
+                                    }
+                                    .onAppear {
+                                        tempName = folder.name.isEmpty ? "" : folder.name
+                                        // Auto-focus when editing starts
+                                        DispatchQueue.main.async {
+                                            isTextFieldFocused = true
+                                        }
+                                    }
+                                    .onTapGesture {
+                                        // Ensure focus when tapping
                                         isTextFieldFocused = true
                                     }
-                                }
-                                .onTapGesture {
-                                    // Ensure focus when tapping
-                                    isTextFieldFocused = true
-                                }
-                        } else {
-                            Text(folder.name.isEmpty ? "Folder name" : folder.name)
-                                .font(.system(size: 13))
-                                .lineLimit(1)
-                                .foregroundColor(folder.name.isEmpty ? .secondary : .primary)
+                            } else {
+                                Text(folder.name.isEmpty ? "Folder name" : folder.name)
+                                    .font(.system(size: 13))
+                                    .lineLimit(1)
+                                    .foregroundColor(folder.name.isEmpty ? .secondary : .primary)
+                            }
+
+                            Spacer()
                         }
-                        
-                        Spacer()
+
+                        Text(formatDate(folder.createdAt))
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
                     }
-                    
-                    Text(formatDate(folder.createdAt))
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+
+                    Spacer()  // Reserve space for hover buttons
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(backgroundColor)
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+            .contentShape(Rectangle())
+            .contextMenu {
+                Button("Rename") {
+                    onRename(folder)
+                }
+                Button("Empty") {
+                    onEmpty(folder)
+                }
+                Button("Delete Folder") {
+                    onDelete(folder)
+                }
+                Button("Download All") {
+                    onDownloadAll(folder)
+                }
+                Divider()
+                Button("Reset Confirmations") {
+                    onResetConfirmations()
+                }
+                Button("Reset Download Location") {
+                    onResetDownloadLocation()
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(backgroundColor)
-            )
+            .onAppear {
+                NSCursor.pop()  // Reset cursor when button appears
+            }
+
+            // Hover buttons overlay
+            if isHovered && !isEditing {
+                HStack(spacing: 8) {
+                    // Download button
+                    Button(action: { onDownloadAll(folder) }) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(Color.white)
+                            .shadow(color: Color.black.opacity(0.25), radius: 3)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Download all images")
+
+                    // Delete button
+                    Button(action: { onDelete(folder) }) {
+                        Image(systemName: "trash.circle.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(Color.white)
+                            .shadow(color: Color.black.opacity(0.25), radius: 3)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Delete folder")
+                }
+                .padding(.trailing, 12)
+                .padding(.top, 12)
+                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+            }
         }
-        .buttonStyle(PlainButtonStyle())
-        .contentShape(Rectangle())
-        .contextMenu {
-            Button("Rename") {
-                onRename(folder)
-            }
-            Button("Empty") {
-                onEmpty(folder)
-            }
-            Button("Delete Folder") {
-                onDelete(folder)
-            }
-            Button("Download All") {
-                onDownloadAll(folder)
-            }
-            Divider()
-            Button("Reset Confirmations") {
-                onResetConfirmations()
-            }
-            Button("Reset Download Location") {
-                onResetDownloadLocation()
-            }
-        }
-        .onAppear {
-            NSCursor.pop()  // Reset cursor when button appears
-        }
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
     }
     
     private var backgroundColor: Color {
